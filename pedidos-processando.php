@@ -37,12 +37,9 @@ function pedidos_debug_log($message, $type = 'INFO', $context = '') {
     error_log("PEDIDOS_DEBUG: {$log_message}");
     
     // Log para console do navegador (se estiver no admin)
-    if (is_admin()) {
+    if (is_admin() && !wp_doing_ajax() && !defined('WP_PLUGIN_DIR')) {
         $safe_message = esc_js($message);
-        // Só logar se não estiver em uma requisição AJAX
-        if (!wp_doing_ajax()) {
-            echo "<script>if(typeof console !== 'undefined') console.log('PEDIDOS_DEBUG: {$safe_message}');</script>";
-        }
+        echo "<script>if(typeof console !== 'undefined') console.log('PEDIDOS_DEBUG: {$safe_message}');</script>";
     }
 }
 
@@ -101,7 +98,7 @@ function pedidos_api_smm_log($message, $context = '') {
 // ============================================================================
 
 // Verificar se o WooCommerce está ativo
-function is_woocommerce_active() {
+function mmssnake_is_woocommerce_active() {
     pedidos_step_log('Verificando se o WooCommerce está ativo', 'WOOCOMMERCE_CHECK');
     
     // Verificar se o WooCommerce está ativo como plugin
@@ -126,7 +123,7 @@ function is_woocommerce_active() {
     return false;
 }
 
-if (!is_woocommerce_active()) {
+if (!mmssnake_is_woocommerce_active()) {
     pedidos_error_log('WooCommerce não ativo - exibindo aviso e parando execução', 'PLUGIN_INIT');
     add_action('admin_notices', function() {
         echo '<div class="notice notice-error"><p>O plugin <strong>Pedidos em Processamento</strong> requer o WooCommerce ativo.</p></div>';
@@ -182,6 +179,9 @@ class PedidosProcessandoPlugin {
             // Teste do cron e solução alternativa
             add_action('admin_init', [$this, 'processar_pedidos_pendentes_ajax']);
             add_action('init', [$this, 'testar_cron_wordpress']);
+            
+            // Hook para página de confirmação de perfil público
+            add_action('init', [$this, 'init_confirmacao_perfil']);
             
             pedidos_success_log('Todos os hooks registrados com sucesso', 'HOOKS_REGISTRATION');
             
@@ -353,6 +353,96 @@ class PedidosProcessandoPlugin {
                             },
                             error: function(xhr, status, error) {
                                 alert("Erro na requisição: " + error);
+                            },
+                            complete: function() {
+                                $btn.prop("disabled", false).text(originalText);
+                            }
+                        });
+                    });
+                    
+                    // Botão de teste de geração de comentários
+                    $("#diagnosticar-conectividade").on("click", function() {
+                        var $btn = $(this);
+                        var originalText = $btn.text();
+                        
+                        $btn.prop("disabled", true).text("Diagnosticando...");
+                        
+                        $.ajax({
+                            url: pedidos_ajax.ajax_url,
+                            type: "POST",
+                            data: {
+                                action: "diagnosticar_conectividade",
+                                nonce: pedidos_ajax.nonce
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    alert("Diagnóstico concluído! Verifique o log de debug para detalhes.");
+                                } else {
+                                    alert("Erro no diagnóstico: " + response.data);
+                                }
+                            },
+                            error: function() {
+                                alert("Erro na requisição de diagnóstico");
+                            },
+                            complete: function() {
+                                $btn.prop("disabled", false).text(originalText);
+                            }
+                        });
+                    });
+                    
+                    $("#testar-geracao-comentarios").on("click", function() {
+                        var $btn = $(this);
+                        var originalText = $btn.text();
+                        
+                        // Solicitar URL do Instagram
+                        var instagram_url = prompt("Digite a URL do Instagram para testar a geração de comentários:\n\nExemplo: https://instagram.com/p/ABC123/");
+                        
+                        if (!instagram_url) {
+                            return;
+                        }
+                        
+                        // Validar URL do Instagram
+                        if (!instagram_url.match(/instagram\.com\/(p|reel|tv)\/[a-zA-Z0-9_-]+/)) {
+                            alert("URL inválida! Use uma URL do Instagram válida.\n\nExemplo: https://instagram.com/p/ABC123/");
+                            return;
+                        }
+                        
+                        // Solicitar quantidade de comentários
+                        var quantidade = prompt("Quantos comentários deseja gerar? (1-20)", "10");
+                        
+                        if (!quantidade || isNaN(quantidade) || quantidade < 1 || quantidade > 20) {
+                            alert("Quantidade inválida! Use um número entre 1 e 20.");
+                            return;
+                        }
+                        
+                        $btn.prop("disabled", true).text("Gerando comentários...");
+                        
+                        $.ajax({
+                            url: pedidos_ajax.ajax_url,
+                            type: "POST",
+                            data: {
+                                action: "testar_geracao_comentarios",
+                                nonce: pedidos_ajax.nonce,
+                                instagram_url: instagram_url,
+                                quantidade: parseInt(quantidade)
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    var dados = response.data;
+                                    var mensagem = "✅ Comentários gerados com sucesso!\n\n";
+                                    mensagem += "📱 URL: " + dados.instagram_url + "\n";
+                                    mensagem += "🔢 Quantidade: " + dados.quantidade + "\n";
+                                    mensagem += "🤖 Fonte: " + dados.fonte + "\n\n";
+                                    mensagem += "💬 Comentários:\n";
+                                    mensagem += dados.comentarios.join("\n");
+                                    
+                                    alert(mensagem);
+                                } else {
+                                    alert("❌ Erro: " + (response.data || "Erro desconhecido"));
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                alert("❌ Erro na requisição: " + error);
                             },
                             complete: function() {
                                 $btn.prop("disabled", false).text(originalText);
@@ -542,6 +632,16 @@ class PedidosProcessandoPlugin {
                         <button type="button" class="button button-secondary" id="testar-api-smm" style="margin-left: 10px;">
                             <span class="dashicons dashicons-share"></span>
                             Testar API SMM
+                        </button>
+                        
+                        <button type="button" class="button button-secondary" id="testar-geracao-comentarios" style="margin-left: 10px;">
+                            <span class="dashicons dashicons-format-chat"></span>
+                            Testar Geração de Comentários
+                        </button>
+                        
+                        <button type="button" class="button button-secondary" id="diagnosticar-conectividade" style="margin-left: 10px;">
+                            <span class="dashicons dashicons-admin-tools"></span>
+                            Diagnosticar Conectividade
                         </button>
                         
                         <button type="button" class="button button-secondary" id="verificar-pedidos" style="margin-left: 10px;">
@@ -803,19 +903,14 @@ class PedidosProcessandoPlugin {
             
             pedidos_api_smm_log('Provedores encontrados: ' . count($providers), 'AJAX_TESTE_API');
             
-            // Usar o primeiro provedor ativo
-            $active_provider = null;
-            foreach ($providers as $provider_id => $provider) {
-                if ($provider['status'] === 'active') {
-                    $active_provider = $provider;
-                    break;
-                }
+            // Usar o provedor padrão configurado
+            $default_provider_id = get_option('smm_default_provider', '');
+            if (empty($default_provider_id) || !isset($providers[$default_provider_id])) {
+                pedidos_api_smm_log('Provedor padrão não configurado ou inválido', 'AJAX_TESTE_API');
+                wp_send_json_error('Provedor padrão não configurado ou inválido');
             }
             
-            if (!$active_provider) {
-                pedidos_api_smm_log('Nenhum provedor SMM ativo', 'AJAX_TESTE_API');
-                wp_send_json_error('Nenhum provedor SMM ativo');
-            }
+            $active_provider = $providers[$default_provider_id];
             
             pedidos_api_smm_log("Provedor ativo: {$active_provider['name']}", 'AJAX_TESTE_API');
             pedidos_api_smm_log("URL da API: {$active_provider['api_url']}", 'AJAX_TESTE_API');
@@ -888,6 +983,7 @@ class PedidosProcessandoPlugin {
             wp_send_json_error('Erro interno: ' . $e->getMessage());
         }
     }
+    
     
     /**
      * AJAX: Verificar pedidos na tabela
@@ -1203,17 +1299,58 @@ class PedidosProcessandoPlugin {
                 // Determinar quantidade baseada na variação
                 $quantidade_variacao = $this->obter_quantidade_da_variacao($variation_id, $item);
                 
-                // Buscar username do Instagram
+                // Buscar username do Instagram ou processar links distribuídos
                 $instagram_username = '';
                 $instagram_meta = wc_get_order_item_meta($item->get_id(), 'Instagram', true);
                 if (!empty($instagram_meta)) {
                     $instagram_username = $instagram_meta;
                 }
                 
-                // Obter Service ID do produto
+                // Verificar se produto requer processamento de links distribuídos
+                $produto_id = $produto ? $produto->get_id() : 0;
+                $requires_link_reconstruction = class_exists('SMMCategoryRules') && SMMCategoryRules::requires_link_reconstruction($produto_id);
+                
+                if ($requires_link_reconstruction) {
+                    pedidos_step_log("Produto '{$produto_nome}' requer processamento de links distribuídos", 'PROCESSAMENTO_PEDIDO');
+                    
+                    // Obter informações de distribuição
+                    $distribution_info = SMMCategoryRules::get_distribution_info([
+                        'item_id' => $item->get_id(),
+                        'product_id' => $produto_id
+                    ]);
+                    
+                    if ($distribution_info['is_distributed']) {
+                        pedidos_success_log("Pedido distribuído detectado: {$distribution_info['total_quantity']} links, multiplicador: {$distribution_info['multiplier']}", 'PROCESSAMENTO_PEDIDO');
+                        // Para pedidos distribuídos, não precisamos de username
+                        $instagram_username = ''; // Limpar username para pedidos distribuídos
+                    }
+                }
+                
+                // Obter Service ID individual do produto
                 $service_id_produto = '';
-                if ($produto) {
-                    $service_id_produto = $produto->get_meta('_smm_service_id');
+                if (class_exists('SMMModule') && $produto) {
+                    $produto_original_id = $produto->get_id();
+                    $produto_id = $produto_original_id;
+                    
+                    // Se for uma variação, buscar o produto pai para verificar SMM
+                    if ($produto->is_type('variation')) {
+                        $produto_pai = wc_get_product($produto->get_parent_id());
+                        if ($produto_pai) {
+                            $produto_id = $produto_pai->get_id();
+                            pedidos_step_log("Produto é variação #{$produto_original_id}, verificando SMM no produto pai #{$produto_id}", 'PROCESSAMENTO_PEDIDO');
+                        }
+                    }
+                    
+                    // Verificar se o produto (ou produto pai) tem SMM ativado
+                    if (SMMModule::is_product_smm_enabled($produto_id)) {
+                        // IMPORTANTE: Usar o ID original da variação para obter o Service ID correto
+                        $service_id_produto = SMMModule::get_product_service_id($produto_original_id);
+                        pedidos_success_log("Service ID individual obtido para produto #{$produto_original_id} (pai: #{$produto_id}): {$service_id_produto}", 'PROCESSAMENTO_PEDIDO');
+                    } else {
+                        // Fallback para Service ID global se produto não tem SMM individual
+                        $service_id_produto = SMMModule::get_global_service_id();
+                        pedidos_warning_log("Produto #{$produto_id} não tem SMM individual, usando Service ID global: {$service_id_produto}", 'PROCESSAMENTO_PEDIDO');
+                    }
                 }
                 
                 // Inserir na tabela de pedidos processados
@@ -1224,7 +1361,7 @@ class PedidosProcessandoPlugin {
                         'produto_id' => $produto ? $produto->get_id() : 0,
                         'produto_nome' => $produto ? $produto->get_name() : $item->get_name(),
                         'quantidade_variacao' => $quantidade_variacao > 0 ? $quantidade_variacao : $item->get_quantity(),
-                        'instagram_username' => $instagram_username,
+                        'instagram_username' => $instagram_username, // Pode estar vazio para pedidos distribuídos
                         'service_id_pedido' => $service_id_produto,
                         'cliente_nome' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
                         'cliente_email' => $order->get_billing_email(),
@@ -1576,12 +1713,12 @@ class PedidosProcessandoPlugin {
             pedidos_step_log("Status do pedido #{$order_id} mudou de '{$old_status}' para '{$new_status}'", 'MUDANCA_STATUS');
         }
         
-        // Processar quando o pedido for confirmado (processing, completed, on-hold)
-        if (in_array($new_status, ['processing', 'completed', 'on-hold'])) {
-            pedidos_step_log("Pedido #{$order_id} com status válido para processamento: {$new_status}", 'MUDANCA_STATUS');
+        // Processar APENAS quando o pedido for mudado para "processing"
+        if ($new_status === 'processing') {
+            pedidos_step_log("Pedido #{$order_id} mudou para status 'processing' - iniciando processamento SMM", 'MUDANCA_STATUS');
             $this->processar_pedido_automaticamente($order_id);
         } else {
-            pedidos_step_log("Pedido #{$order_id} com status não processável: {$new_status}", 'MUDANCA_STATUS');
+            pedidos_step_log("Pedido #{$order_id} com status '{$new_status}' - não processável (apenas 'processing')", 'MUDANCA_STATUS');
         }
     }
     
@@ -1651,6 +1788,15 @@ class PedidosProcessandoPlugin {
     private function enviar_pedido_para_api($order) {
         pedidos_step_log("Enviando pedido #{$order->get_id()} para API", 'ENVIAR_PEDIDO_API');
         
+        // Verificar se o pedido está com status "processing"
+        $status = $order->get_status();
+        if ($status !== 'processing') {
+            pedidos_warning_log("Pedido #{$order->get_id()} tem status '{$status}' - ignorando (apenas 'processing' é processado)", 'ENVIAR_PEDIDO_API');
+            return;
+        }
+        
+        pedidos_step_log("Pedido #{$order->get_id()} com status 'processing' confirmado - prosseguindo", 'ENVIAR_PEDIDO_API');
+        
         global $wpdb;
         $table_name = $wpdb->prefix . 'pedidos_processados';
         
@@ -1675,34 +1821,78 @@ class PedidosProcessandoPlugin {
                 $quantidade_variacao = $this->obter_quantidade_da_variacao($variation_id, $item);
                 pedidos_step_log("Quantidade da variação determinada: {$quantidade_variacao}", 'ENVIAR_PEDIDO_API');
                 
-                // Buscar username do Instagram
+                // Buscar username do Instagram ou processar links distribuídos
                 $instagram_username = '';
                 $instagram_meta = wc_get_order_item_meta($item->get_id(), 'Instagram', true);
                 if (!empty($instagram_meta)) {
                     $instagram_username = $instagram_meta;
-                    pedidos_success_log("Username Instagram encontrado: {$instagram_username}", 'ENVIAR_PEDIDO_API');
-                } else {
-                    pedidos_warning_log("Username Instagram não encontrado para item", 'ENVIAR_PEDIDO_API');
                 }
                 
-                // Obter Service ID do produto
+                // Verificar se produto requer processamento de links distribuídos
+                $produto_id = $produto ? $produto->get_id() : 0;
+                $requires_link_reconstruction = class_exists('SMMCategoryRules') && SMMCategoryRules::requires_link_reconstruction($produto_id);
+                
+                if ($requires_link_reconstruction) {
+                    pedidos_step_log("Produto '{$produto_nome}' requer processamento de links distribuídos", 'ENVIAR_PEDIDO_API');
+                    
+                    // Obter informações de distribuição
+                    $distribution_info = SMMCategoryRules::get_distribution_info([
+                        'item_id' => $item->get_id(),
+                        'product_id' => $produto_id
+                    ]);
+                    
+                    if ($distribution_info['is_distributed']) {
+                        pedidos_success_log("Pedido distribuído detectado: {$distribution_info['total_quantity']} links, multiplicador: {$distribution_info['multiplier']}", 'ENVIAR_PEDIDO_API');
+                        // Para pedidos distribuídos, não precisamos de username
+                        $instagram_username = ''; // Limpar username para pedidos distribuídos
+                    }
+                }
+                
+                if (!empty($instagram_username)) {
+                    pedidos_success_log("Username Instagram encontrado: {$instagram_username}", 'ENVIAR_PEDIDO_API');
+                } else {
+                    pedidos_error_log("Username Instagram não encontrado para item", 'ENVIAR_PEDIDO_API');
+                }
+                
+                // Obter Service ID individual do produto
                 $service_id_produto = '';
-                if ($produto) {
-                    $service_id_produto = $produto->get_meta('_smm_service_id');
+                if (class_exists('SMMModule') && $produto) {
+                    $produto_original_id = $produto->get_id();
+                    $produto_id = $produto_original_id;
+                    
+                    // Se for uma variação, buscar o produto pai para verificar SMM
+                    if ($produto->is_type('variation')) {
+                        $produto_pai = wc_get_product($produto->get_parent_id());
+                        if ($produto_pai) {
+                            $produto_id = $produto_pai->get_id();
+                            pedidos_step_log("Produto é variação #{$produto_original_id}, verificando SMM no produto pai #{$produto_id}", 'ENVIAR_PEDIDO_API');
+                        }
+                    }
+                    
+                    // Verificar se o produto (ou produto pai) tem SMM ativado
+                    if (SMMModule::is_product_smm_enabled($produto_id)) {
+                        // IMPORTANTE: Usar o ID original da variação para obter o Service ID correto
+                        $service_id_produto = SMMModule::get_product_service_id($produto_original_id);
+                        pedidos_success_log("Service ID individual obtido para produto #{$produto_original_id} (pai: #{$produto_id}): {$service_id_produto}", 'ENVIAR_PEDIDO_API');
+                    } else {
+                        // Fallback para Service ID global se produto não tem SMM individual
+                        $service_id_produto = SMMModule::get_global_service_id();
+                        pedidos_warning_log("Produto #{$produto_id} não tem SMM individual, usando Service ID global: {$service_id_produto}", 'ENVIAR_PEDIDO_API');
+                    }
+                    
                     pedidos_data_log([
-                        'produto_id' => $produto->get_id(),
-                        'produto_nome' => $produto->get_name(),
-                        'service_id_obtido' => $service_id_produto,
-                        'service_id_vazio' => empty($service_id_produto)
-                    ], 'ENVIAR_PEDIDO_API - Service ID do produto');
+                        'service_id_individual' => $service_id_produto,
+                        'service_id_vazio' => empty($service_id_produto),
+                        'produto_id' => $produto_id,
+                        'produto_original_id' => $produto->get_id(),
+                        'smm_habilitado' => SMMModule::is_product_smm_enabled($produto_id)
+                    ], 'ENVIAR_PEDIDO_API - Service ID Individual');
                     
                     if (empty($service_id_produto)) {
-                        pedidos_warning_log("PRODUTO #{$produto->get_id()} NÃO TEM SERVICE ID CONFIGURADO!", 'ENVIAR_PEDIDO_API');
-                    } else {
-                        pedidos_success_log("Service ID obtido do produto #{$produto->get_id()}: {$service_id_produto}", 'ENVIAR_PEDIDO_API');
+                        pedidos_warning_log("SERVICE ID NÃO CONFIGURADO para produto #{$produto_id}!", 'ENVIAR_PEDIDO_API');
                     }
                 } else {
-                    pedidos_error_log("Produto não encontrado para o item", 'ENVIAR_PEDIDO_API');
+                    pedidos_error_log("Módulo SMM não disponível ou produto não encontrado", 'ENVIAR_PEDIDO_API');
                 }
                 
                 // Preparar dados para inserção
@@ -1761,36 +1951,34 @@ class PedidosProcessandoPlugin {
      * Adicionar campo Service ID no admin do produto
      */
     public function adicionar_campo_service_id() {
-        woocommerce_wp_text_input([
-            'id' => '_smm_service_id',
-            'label' => 'Service ID SMM',
-            'description' => 'ID do serviço no provedor SMM (ex: 4420)',
-            'desc_tip' => true,
-            'type' => 'number',
-            'custom_attributes' => [
-                'step' => '1',
-                'min' => '1'
-            ]
-        ]);
+        // Campo removido - agora usa Service ID global nas configurações SMM
+        // Só exibir se não estiver em ativação
+        if (!defined('WP_PLUGIN_DIR') && is_admin()) {
+            echo '<p style="color: #666; font-style: italic;">'
+                . '<strong>Nota:</strong> O Service ID agora é configurado globalmente nas '
+                . '<a href="' . admin_url('admin.php?page=smm-settings') . '" target="_blank">Configurações SMM</a>.'
+                . '</p>';
+        }
     }
     
     /**
      * Salvar campo Service ID do produto
      */
     public function salvar_campo_service_id($post_id) {
-        $service_id = isset($_POST['_smm_service_id']) ? sanitize_text_field($_POST['_smm_service_id']) : '';
-        
-        if (!empty($service_id)) {
-            update_post_meta($post_id, '_smm_service_id', $service_id);
-        } else {
-            delete_post_meta($post_id, '_smm_service_id');
-        }
+        // Remover campos antigos se existirem (limpeza)
+        delete_post_meta($post_id, '_smm_service_id');
     }
     
     /**
      * Adicionar cron personalizado de 2 minutos
      */
     public function adicionar_cron_2_minutos($schedules) {
+        // Evitar múltiplas execuções durante ativação
+        static $configurado = false;
+        if ($configurado) {
+            return $schedules;
+        }
+        
         pedidos_step_log('Adicionando cron personalizado de 2 minutos', 'CRON_CONFIG');
         
         $schedules['every_2_minutes'] = [
@@ -1799,6 +1987,7 @@ class PedidosProcessandoPlugin {
         ];
         
         pedidos_success_log('Cron de 2 minutos configurado', 'CRON_CONFIG');
+        $configurado = true;
         return $schedules;
     }
     
@@ -1806,16 +1995,23 @@ class PedidosProcessandoPlugin {
      * Agendar processamento de pedidos pendentes
      */
     public function agendar_processamento_pedidos() {
+        // Evitar múltiplas execuções durante ativação
+        static $agendado = false;
+        if ($agendado) {
+            return;
+        }
+        
         pedidos_step_log('Verificando agendamento de processamento de pedidos', 'AGENDAR_PROCESSAMENTO');
         
         // Limpar cron existente para evitar duplicatas
         wp_clear_scheduled_hook('processar_pedidos_pendentes');
         
         // Agendar novo cron
-        $agendado = wp_schedule_event(time(), 'every_2_minutes', 'processar_pedidos_pendentes');
+        $resultado = wp_schedule_event(time(), 'every_2_minutes', 'processar_pedidos_pendentes');
         
-        if ($agendado) {
+        if ($resultado) {
             pedidos_success_log('Processamento de pedidos agendado com sucesso', 'AGENDAR_PROCESSAMENTO');
+            $agendado = true;
             
             // Verificar próximo agendamento
             $next_scheduled = wp_next_scheduled('processar_pedidos_pendentes');
@@ -1829,6 +2025,7 @@ class PedidosProcessandoPlugin {
             $agendado_padrao = wp_schedule_event(time() + 120, 'hourly', 'processar_pedidos_pendentes');
             if ($agendado_padrao) {
                 pedidos_warning_log('Processamento agendado com intervalo padrão (1 hora) como fallback', 'AGENDAR_PROCESSAMENTO');
+                $agendado = true;
             } else {
                 pedidos_error_log('Falha total ao agendar processamento - usando apenas solução AJAX', 'AGENDAR_PROCESSAMENTO');
             }
@@ -1933,14 +2130,84 @@ class PedidosProcessandoPlugin {
         $table_name = $wpdb->prefix . 'pedidos_processados';
         
         pedidos_step_log("Tentando processar pedido #{$pedido->order_id} (Tentativa " . ($pedido->tentativas + 1) . ")", 'TENTAR_PROCESSAR_PEDIDO');
+        pedidos_debug_log("Dados do pedido: ID={$pedido->id}, Order ID={$pedido->order_id}, Produto ID={$pedido->produto_id}, Username={$pedido->instagram_username}, Quantidade={$pedido->quantidade_variacao}", 'TENTAR_PROCESSAR_PEDIDO');
         
         try {
-            // Verificar se o pedido tem username do Instagram
+            // Verificar se é um pedido distribuído (verificar se o produto requer processamento distribuído)
+            $produto = wc_get_product($pedido->produto_id);
+            pedidos_debug_log("Produto carregado: " . ($produto ? "SIM - {$produto->get_name()}" : "NÃO"), 'TENTAR_PROCESSAR_PEDIDO');
+            
+            if ($produto && class_exists('SMMCategoryRules')) {
+                // Obter o item_id real do pedido WooCommerce
+                $order = wc_get_order($pedido->order_id);
+                pedidos_debug_log("Order WooCommerce carregado: " . ($order ? "SIM" : "NÃO"), 'TENTAR_PROCESSAR_PEDIDO');
+                
+                $item_id = 0;
+                if ($order) {
+                    pedidos_debug_log("Buscando item do pedido para produto ID {$pedido->produto_id}", 'TENTAR_PROCESSAR_PEDIDO');
+                    foreach ($order->get_items() as $item) {
+                        pedidos_debug_log("Item encontrado - Product ID: {$item->get_product_id()}, Variation ID: {$item->get_variation_id()}, Item ID: {$item->get_id()}", 'TENTAR_PROCESSAR_PEDIDO');
+                        // Verificar tanto o product_id quanto o variation_id
+                        if ($item->get_product_id() == $pedido->produto_id || $item->get_variation_id() == $pedido->produto_id) {
+                            $item_id = $item->get_id();
+                            pedidos_debug_log("Item ID encontrado: {$item_id} (match com product_id: {$item->get_product_id()}, variation_id: {$item->get_variation_id()})", 'TENTAR_PROCESSAR_PEDIDO');
+                            break;
+                        }
+                    }
+                }
+                
+                pedidos_debug_log("Chamando get_distribution_info com item_id={$item_id}, product_id={$pedido->produto_id}", 'TENTAR_PROCESSAR_PEDIDO');
+                $distribution_info = SMMCategoryRules::get_distribution_info([
+                    'item_id' => $item_id,
+                    'product_id' => $pedido->produto_id
+                ]);
+                
+                pedidos_debug_log("Resultado da verificação de distribuição: " . ($distribution_info['is_distributed'] ? 'SIM' : 'NÃO'), 'TENTAR_PROCESSAR_PEDIDO');
+                pedidos_debug_log("Detalhes da distribuição: " . print_r($distribution_info, true), 'TENTAR_PROCESSAR_PEDIDO');
+                
+                if ($distribution_info['is_distributed']) {
+                    pedidos_success_log("Pedido distribuído detectado para produto '{$produto->get_name()}'", 'TENTAR_PROCESSAR_PEDIDO');
+                    return $this->processar_pedido_distribuido($pedido);
+                } else {
+                    // Se o produto está configurado para posts/reels mas não tem links, falhar
+                    $produto_id = $pedido->produto_id;
+                    $produto_obj = wc_get_product($produto_id);
+                    if ($produto_obj && $produto_obj->is_type('variation')) {
+                        $produto_id = $produto_obj->get_parent_id();
+                    }
+                    
+                    $logic_type = get_post_meta($produto_id, '_smm_logic_type', true);
+                    
+                    if (in_array($logic_type, ['posts_reels', 'comentarios_ia'])) {
+                        pedidos_error_log("Produto configurado para {$logic_type} mas sem links de publicações", 'TENTAR_PROCESSAR_PEDIDO');
+                        $this->marcar_pedido_erro($pedido, "Produto configurado para {$logic_type} mas sem links de publicações");
+                        return false;
+                    } else {
+                        pedidos_debug_log("Pedido NÃO é distribuído, continuando com processamento normal", 'TENTAR_PROCESSAR_PEDIDO');
+                    }
+                }
+            }
+            
+            // Verificar se o pedido tem username do Instagram (apenas para pedidos não distribuídos)
             if (empty($pedido->instagram_username)) {
-                pedidos_warning_log("Pedido #{$pedido->order_id} não tem username do Instagram configurado", 'TENTAR_PROCESSAR_PEDIDO');
+                pedidos_error_log("Pedido #{$pedido->order_id} não tem username do Instagram configurado", 'TENTAR_PROCESSAR_PEDIDO');
                 $this->marcar_pedido_erro($pedido, 'Username do Instagram não configurado');
                 return false;
             }
+            
+            // Verificar se o perfil é público (apenas para pedidos não distribuídos)
+            $perfil_publico = $this->verificar_perfil_publico($pedido);
+            if ($perfil_publico === false) {
+                pedidos_warning_log("Pedido #{$pedido->order_id} - Perfil não é público", 'TENTAR_PROCESSAR_PEDIDO');
+                $this->marcar_pedido_erro($pedido, 'Perfil do Instagram não é público');
+                return false;
+            } elseif ($perfil_publico === null) {
+                pedidos_warning_log("Pedido #{$pedido->order_id} - Status do perfil desconhecido", 'TENTAR_PROCESSAR_PEDIDO');
+                $this->marcar_pedido_erro($pedido, 'Status do perfil Instagram desconhecido');
+                return false;
+            }
+            
+            pedidos_success_log("Perfil público confirmado para pedido #{$pedido->order_id}", 'TENTAR_PROCESSAR_PEDIDO');
             
             pedidos_success_log("Username Instagram encontrado: {$pedido->instagram_username}", 'TENTAR_PROCESSAR_PEDIDO');
             
@@ -2002,6 +2269,768 @@ class PedidosProcessandoPlugin {
     }
     
     /**
+     * Marcar pedido com sucesso
+     */
+    private function marcar_pedido_sucesso($pedido, $mensagem) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pedidos_processados';
+        
+        pedidos_step_log("Marcando pedido #{$pedido->order_id} com sucesso: {$mensagem}", 'MARCAR_PEDIDO_SUCESSO');
+        
+        // Verificar se já existe order_id_api para não sobrescrever
+        $existing_order = $wpdb->get_row($wpdb->prepare("SELECT order_id_api FROM {$table_name} WHERE id = %d", $pedido->id));
+        $preserve_order_id = !empty($existing_order->order_id_api);
+        
+        $update_data = [
+            'status_api' => 'completed',
+            'mensagem_api' => $mensagem,
+            'data_atualizacao' => current_time('mysql')
+        ];
+        
+        // Se não há order_id_api, tentar obter do pedido atual
+        if (!$preserve_order_id && !empty($pedido->order_id_api)) {
+            $update_data['order_id_api'] = $pedido->order_id_api;
+        }
+        
+        $update_result = $wpdb->update(
+            $table_name,
+            $update_data,
+            ['id' => $pedido->id],
+            array_fill(0, count($update_data), '%s'),
+            ['%d']
+        );
+        
+        if ($update_result === false) {
+            pedidos_error_log("Erro ao marcar pedido #{$pedido->order_id} com sucesso: {$wpdb->last_error}", 'MARCAR_PEDIDO_SUCESSO');
+        } else {
+            pedidos_success_log("Pedido #{$pedido->order_id} marcado como concluído com sucesso", 'MARCAR_PEDIDO_SUCESSO');
+        }
+    }
+    
+    /**
+     * Verificar se o perfil do Instagram é público
+     */
+    private function verificar_perfil_publico($pedido) {
+        // Obter o pedido WooCommerce
+        $order = wc_get_order($pedido->order_id);
+        if (!$order) {
+            pedidos_error_log("Pedido WooCommerce #{$pedido->order_id} não encontrado para verificação de perfil", 'VERIFICAR_PERFIL_PUBLICO');
+            return null;
+        }
+        
+        // Buscar o item do pedido correspondente
+        $item_id = null;
+        foreach ($order->get_items() as $item) {
+            if ($item->get_product_id() == $pedido->produto_id || $item->get_variation_id() == $pedido->produto_id) {
+                $item_id = $item->get_id();
+                break;
+            }
+        }
+        
+        if (!$item_id) {
+            pedidos_error_log("Item do pedido não encontrado para produto ID {$pedido->produto_id}", 'VERIFICAR_PERFIL_PUBLICO');
+            return null;
+        }
+        
+        // Obter o status do perfil
+        $status_perfil = wc_get_order_item_meta($item_id, 'Status do Perfil', true);
+        pedidos_debug_log("Status do perfil encontrado: '{$status_perfil}' para item ID {$item_id}", 'VERIFICAR_PERFIL_PUBLICO');
+        
+        // Verificar se o campo existe
+        if (empty($status_perfil)) {
+            pedidos_warning_log("Campo 'Status do Perfil' não encontrado ou vazio para item ID {$item_id}", 'VERIFICAR_PERFIL_PUBLICO');
+            return null;
+        }
+        
+        // Verificar se é um valor válido
+        $valores_validos = ['Público', 'Privado', 'Desconhecido'];
+        if (!in_array($status_perfil, $valores_validos)) {
+            pedidos_warning_log("Valor inválido para 'Status do Perfil': '{$status_perfil}'", 'VERIFICAR_PERFIL_PUBLICO');
+            return null;
+        }
+        
+        // Retornar true se público, false se privado, null se desconhecido
+        switch ($status_perfil) {
+            case 'Público':
+                pedidos_success_log("Perfil confirmado como PÚBLICO", 'VERIFICAR_PERFIL_PUBLICO');
+                return true;
+            case 'Privado':
+                pedidos_warning_log("Perfil confirmado como PRIVADO", 'VERIFICAR_PERFIL_PUBLICO');
+                // Enviar e-mail de notificação para o cliente
+                $this->enviar_email_perfil_privado($pedido, $item_id);
+                return false;
+            case 'Desconhecido':
+            default:
+                pedidos_warning_log("Status do perfil DESCONHECIDO", 'VERIFICAR_PERFIL_PUBLICO');
+                return null;
+        }
+    }
+    
+    /**
+     * Enviar e-mail de notificação para perfil privado
+     */
+    private function enviar_email_perfil_privado($pedido, $item_id) {
+        try {
+            // Obter dados do pedido
+            $order = wc_get_order($pedido->order_id);
+            if (!$order) {
+                pedidos_error_log("Pedido WooCommerce não encontrado para envio de e-mail", 'ENVIAR_EMAIL_PERFIL_PRIVADO');
+                return false;
+            }
+            
+            // Obter dados do cliente
+            $cliente_email = $order->get_billing_email();
+            $cliente_nome = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+            $instagram_username = $pedido->instagram_username;
+            
+            if (empty($cliente_email)) {
+                pedidos_error_log("E-mail do cliente não encontrado para pedido #{$pedido->order_id}", 'ENVIAR_EMAIL_PERFIL_PRIVADO');
+                return false;
+            }
+            
+            // Gerar token de confirmação
+            $token = $this->gerar_token_confirmacao($pedido->id, $item_id);
+            if (!$token) {
+                pedidos_error_log("Falha ao gerar token de confirmação", 'ENVIAR_EMAIL_PERFIL_PRIVADO');
+                return false;
+            }
+            
+            // Criar link de confirmação
+            $link_confirmacao = home_url("/confirmar-perfil-publico/?token={$token}");
+            
+            // Criar link de tracking (opcional)
+            $tracking_link = home_url("/track-email/?token={$token}&action=open");
+            
+            // Preparar dados do e-mail
+            $assunto = "🔒 Seu perfil Instagram precisa ser público - Pedido #{$pedido->order_id}";
+            
+            $mensagem = $this->preparar_mensagem_email_perfil_privado([
+                'cliente_nome' => $cliente_nome,
+                'order_id' => $pedido->order_id,
+                'instagram_username' => $instagram_username,
+                'link_confirmacao' => $link_confirmacao,
+                'produto_nome' => $pedido->produto_nome
+            ]);
+            
+            // Configurar headers do e-mail profissionais
+            $site_name = get_bloginfo('name');
+            $admin_email = get_option('admin_email');
+            $current_time = current_time('r');
+            
+            $headers = [
+                'Content-Type: text/html; charset=UTF-8',
+                'From: ' . $site_name . ' <noreply@seguipix.com.br>',
+                'Reply-To: ' . $admin_email,
+                'Return-Path: noreply@seguipix.com.br',
+                'Sender: noreply@seguipix.com.br',
+                'X-Mailer: ' . $site_name . ' Plugin v1.0',
+                'X-Priority: 3',
+                'X-MSMail-Priority: Normal',
+                'Importance: Normal',
+                'X-Report-Abuse: Please report abuse to ' . $admin_email,
+                'List-Unsubscribe: <mailto:' . $admin_email . '?subject=Unsubscribe>',
+                'Message-ID: <' . time() . '.' . uniqid() . '@seguipix.com.br>',
+                'Date: ' . $current_time,
+                'MIME-Version: 1.0'
+            ];
+            
+            // Enviar e-mail com retry
+            $enviado = $this->enviar_email_com_retry($cliente_email, $assunto, $mensagem, $headers);
+            
+            if ($enviado) {
+                pedidos_success_log("E-mail de perfil privado enviado para {$cliente_email} - Pedido #{$pedido->order_id}", 'ENVIAR_EMAIL_PERFIL_PRIVADO');
+                
+                // Marcar que o e-mail foi enviado
+                $this->marcar_email_enviado($pedido->id, $item_id);
+                
+                return true;
+            } else {
+                pedidos_error_log("Falha ao enviar e-mail de perfil privado para {$cliente_email} após 3 tentativas", 'ENVIAR_EMAIL_PERFIL_PRIVADO');
+                return false;
+            }
+            
+        } catch (Exception $e) {
+            pedidos_error_log("Erro ao enviar e-mail de perfil privado: " . $e->getMessage(), 'ENVIAR_EMAIL_PERFIL_PRIVADO');
+            return false;
+        }
+    }
+    
+    /**
+     * Preparar mensagem do e-mail para perfil privado
+     */
+    private function preparar_mensagem_email_perfil_privado($dados) {
+        $site_name = get_bloginfo('name');
+        $site_url = home_url();
+        $current_time = current_time('d/m/Y H:i');
+        $expiration_time = date('d/m/Y H:i', strtotime('+24 hours'));
+        
+        $html = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Perfil Instagram Privado - ' . esc_html($site_name) . '</title>
+            <style>
+                body { 
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+                    line-height: 1.6; 
+                    color: #333; 
+                    max-width: 600px; 
+                    margin: 0 auto; 
+                    padding: 20px; 
+                    background: #f8f9fa;
+                }
+                .email-container { 
+                    background: white; 
+                    border-radius: 12px; 
+                    overflow: hidden; 
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                }
+                .header { 
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    color: white; 
+                    padding: 40px 30px; 
+                    text-align: center; 
+                }
+                .header h1 { 
+                    margin: 0 0 10px 0; 
+                    font-size: 28px; 
+                    font-weight: 700;
+                }
+                .header p { 
+                    margin: 0; 
+                    font-size: 16px; 
+                    opacity: 0.9;
+                }
+                .content { 
+                    padding: 40px 30px; 
+                }
+                .greeting { 
+                    font-size: 18px; 
+                    margin-bottom: 25px; 
+                    color: #2c3e50;
+                }
+                .alert { 
+                    background: #fff3cd; 
+                    border: 1px solid #ffeaa7; 
+                    color: #856404; 
+                    padding: 20px; 
+                    border-radius: 8px; 
+                    margin: 25px 0; 
+                    border-left: 4px solid #ffc107;
+                }
+                .alert strong { 
+                    color: #856404; 
+                    font-weight: 600;
+                }
+                .order-info { 
+                    background: #f8f9fa; 
+                    border: 1px solid #e9ecef; 
+                    border-radius: 8px; 
+                    padding: 20px; 
+                    margin: 25px 0;
+                }
+                .order-info h3 { 
+                    margin: 0 0 15px 0; 
+                    color: #495057; 
+                    font-size: 16px;
+                }
+                .order-detail { 
+                    display: flex; 
+                    justify-content: space-between; 
+                    margin: 8px 0; 
+                    padding: 5px 0;
+                }
+                .order-detail strong { 
+                    color: #495057;
+                }
+                .order-detail span { 
+                    color: #6c757d;
+                }
+                .steps { 
+                    background: #e7f3ff; 
+                    border-left: 4px solid #007cba; 
+                    padding: 25px; 
+                    margin: 25px 0; 
+                    border-radius: 0 8px 8px 0;
+                }
+                .steps h3 { 
+                    margin: 0 0 20px 0; 
+                    color: #007cba; 
+                    font-size: 18px;
+                }
+                .steps ol { 
+                    margin: 0; 
+                    padding-left: 20px;
+                }
+                .steps li { 
+                    margin: 12px 0; 
+                    color: #495057;
+                }
+                .btn-container { 
+                    text-align: center; 
+                    margin: 35px 0;
+                }
+                .btn { 
+                    display: inline-block; 
+                    background: #28a745; 
+                    color: white; 
+                    padding: 18px 35px; 
+                    text-decoration: none; 
+                    border-radius: 8px; 
+                    font-weight: 600; 
+                    font-size: 16px; 
+                    transition: background 0.3s ease;
+                    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+                }
+                .btn:hover { 
+                    background: #218838; 
+                    text-decoration: none; 
+                    color: white;
+                }
+                .info-box { 
+                    background: #d1ecf1; 
+                    border: 1px solid #bee5eb; 
+                    color: #0c5460; 
+                    padding: 20px; 
+                    border-radius: 8px; 
+                    margin: 25px 0;
+                }
+                .info-box strong { 
+                    color: #0c5460;
+                }
+                .footer { 
+                    background: #f8f9fa; 
+                    padding: 30px; 
+                    text-align: center; 
+                    color: #6c757d; 
+                    font-size: 14px; 
+                    border-top: 1px solid #e9ecef;
+                }
+                .footer p { 
+                    margin: 8px 0;
+                }
+                .logo { 
+                    font-size: 20px; 
+                    font-weight: 700; 
+                    color: #667eea; 
+                    margin-bottom: 10px;
+                }
+                .expiration { 
+                    background: #f8d7da; 
+                    border: 1px solid #f5c6cb; 
+                    color: #721c24; 
+                    padding: 15px; 
+                    border-radius: 8px; 
+                    margin: 20px 0; 
+                    text-align: center;
+                }
+                .expiration strong { 
+                    color: #721c24;
+                }
+                @media (max-width: 600px) {
+                    body { padding: 10px; }
+                    .content { padding: 30px 20px; }
+                    .header { padding: 30px 20px; }
+                    .header h1 { font-size: 24px; }
+                    .btn { padding: 15px 25px; font-size: 14px; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="email-container">
+                <div class="header">
+                    <h1>🔒 Perfil Instagram Privado</h1>
+                    <p>Seu pedido precisa de atenção</p>
+                </div>
+                
+                <div class="content">
+                    <div class="greeting">
+                        Olá <strong>' . esc_html($dados['cliente_nome']) . '</strong>,
+                    </div>
+                    
+                    <div class="alert">
+                        <strong>⚠️ Atenção:</strong> Detectamos que seu perfil Instagram <strong>@' . esc_html($dados['instagram_username']) . '</strong> está configurado como <strong>PRIVADO</strong>.
+                    </div>
+                    
+                    <div class="order-info">
+                        <h3>📦 Informações do Pedido</h3>
+                        <div class="order-detail">
+                            <strong>Número do Pedido:</strong>
+                            <span>#' . esc_html($dados['order_id']) . '</span>
+                        </div>
+                        <div class="order-detail">
+                            <strong>Produto:</strong>
+                            <span>' . esc_html($dados['produto_nome']) . '</span>
+                        </div>
+                        <div class="order-detail">
+                            <strong>Data/Hora:</strong>
+                            <span>' . $current_time . '</span>
+                        </div>
+                    </div>
+                    
+                    <div class="steps">
+                        <h3>📋 O que você precisa fazer:</h3>
+                        <ol>
+                            <li>Acesse seu Instagram no celular ou computador</li>
+                            <li>Vá em <strong>Configurações</strong> → <strong>Privacidade</strong></li>
+                            <li>Desative a opção <strong>"Conta Privada"</strong></li>
+                            <li>Clique no botão abaixo para confirmar</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="btn-container">
+                        <a href="' . esc_url($dados['link_confirmacao']) . '" class="btn">
+                            ✅ Confirmar Perfil Público
+                        </a>
+                    </div>
+                    
+                    <div class="expiration">
+                        <strong>⏰ Importante:</strong> Este link expira em <strong>' . $expiration_time . '</strong>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>💡 Dica:</strong> Você pode tornar seu perfil privado novamente após o processamento, se desejar.
+                    </div>
+                    
+                    <p style="text-align: center; margin: 30px 0; font-size: 16px; color: #495057;">
+                        <strong>Após confirmar:</strong> Seu pedido será processado automaticamente em até 5 minutos.
+                    </p>
+                </div>
+                
+                <div class="footer">
+                    <div class="logo">' . esc_html($site_name) . '</div>
+                    <p>Este é um e-mail automático. Não responda a esta mensagem.</p>
+                    <p>Se você não fez este pedido, ignore este e-mail.</p>
+                    <p><a href="' . esc_url($site_url) . '" style="color: #667eea; text-decoration: none;">' . esc_url($site_url) . '</a></p>
+                </div>
+                
+                <!-- Tracking pixel invisível -->
+                <img src="' . esc_url($tracking_link) . '" width="1" height="1" style="display: none;" alt="" />
+            </div>
+        </body>
+        </html>';
+        
+        return $html;
+    }
+    
+    /**
+     * Gerar token de confirmação
+     */
+    private function gerar_token_confirmacao($pedido_id, $item_id) {
+        global $wpdb;
+        
+        // Gerar token único
+        $token = wp_generate_password(32, false);
+        
+        // Salvar token na tabela
+        $table_name = $wpdb->prefix . 'pedidos_confirmacao_perfil';
+        
+        // Criar tabela se não existir
+        $this->criar_tabela_confirmacao_perfil();
+        
+        $resultado = $wpdb->insert(
+            $table_name,
+            [
+                'pedido_id' => $pedido_id,
+                'item_id' => $item_id,
+                'token' => $token,
+                'status' => 'pending',
+                'data_criacao' => current_time('mysql'),
+                'data_expiracao' => date('Y-m-d H:i:s', strtotime('+24 hours'))
+            ],
+            ['%d', '%d', '%s', '%s', '%s', '%s']
+        );
+        
+        if ($resultado !== false) {
+            pedidos_success_log("Token de confirmação gerado: {$token} para pedido #{$pedido_id}", 'GERAR_TOKEN_CONFIRMACAO');
+            return $token;
+        } else {
+            pedidos_error_log("Erro ao gerar token de confirmação: " . $wpdb->last_error, 'GERAR_TOKEN_CONFIRMACAO');
+            return false;
+        }
+    }
+    
+    /**
+     * Criar tabela de confirmação de perfil
+     */
+    private function criar_tabela_confirmacao_perfil() {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'pedidos_confirmacao_perfil';
+        
+        $charset_collate = $wpdb->get_charset_collate();
+        
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            pedido_id bigint(20) NOT NULL,
+            item_id bigint(20) NOT NULL,
+            token varchar(32) NOT NULL,
+            status varchar(20) DEFAULT 'pending',
+            data_criacao datetime DEFAULT CURRENT_TIMESTAMP,
+            data_expiracao datetime NOT NULL,
+            data_confirmacao datetime NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY token (token),
+            KEY pedido_id (pedido_id),
+            KEY item_id (item_id),
+            KEY status (status)
+        ) $charset_collate;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+    
+    /**
+     * Enviar e-mail com sistema de retry
+     */
+    private function enviar_email_com_retry($to, $subject, $message, $headers, $max_tentativas = 3) {
+        $tentativas = 0;
+        $enviado = false;
+        
+        while ($tentativas < $max_tentativas && !$enviado) {
+            $tentativas++;
+            
+            pedidos_debug_log("Tentativa {$tentativas}/{$max_tentativas} de envio de e-mail para {$to}", 'ENVIAR_EMAIL_COM_RETRY');
+            
+            $enviado = wp_mail($to, $subject, $message, $headers);
+            
+            if (!$enviado) {
+                pedidos_warning_log("Tentativa {$tentativas} falhou para {$to}", 'ENVIAR_EMAIL_COM_RETRY');
+                
+                // Aguardar antes da próxima tentativa (exponential backoff)
+                if ($tentativas < $max_tentativas) {
+                    $delay = pow(2, $tentativas - 1) * 5; // 5s, 10s, 20s
+                    pedidos_debug_log("Aguardando {$delay} segundos antes da próxima tentativa", 'ENVIAR_EMAIL_COM_RETRY');
+                    sleep($delay);
+                }
+            } else {
+                pedidos_success_log("E-mail enviado com sucesso na tentativa {$tentativas}", 'ENVIAR_EMAIL_COM_RETRY');
+            }
+        }
+        
+        return $enviado;
+    }
+    
+    /**
+     * Marcar que o e-mail foi enviado
+     */
+    private function marcar_email_enviado($pedido_id, $item_id) {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'pedidos_processados';
+        
+        $wpdb->update(
+            $table_name,
+            [
+                'mensagem_api' => 'E-mail de perfil privado enviado - Aguardando confirmação',
+                'data_atualizacao' => current_time('mysql')
+            ],
+            ['id' => $pedido_id],
+            ['%s', '%s'],
+            ['%d']
+        );
+    }
+    
+    /**
+     * Inicializar sistema de confirmação de perfil
+     */
+    public function init_confirmacao_perfil() {
+        // Verificar se é a página de confirmação
+        if (isset($_GET['token']) && !empty($_GET['token'])) {
+            $this->processar_confirmacao_perfil($_GET['token']);
+        }
+    }
+    
+    /**
+     * Processar confirmação de perfil público
+     */
+    private function processar_confirmacao_perfil($token) {
+        global $wpdb;
+        
+        try {
+            // Buscar token na tabela
+            $table_name = $wpdb->prefix . 'pedidos_confirmacao_perfil';
+            $confirmacao = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM {$table_name} WHERE token = %s AND status = 'pending'",
+                $token
+            ));
+            
+            pedidos_debug_log("Token recebido: {$token}", 'PROCESSAR_CONFIRMACAO_PERFIL');
+            pedidos_debug_log("Confirmação encontrada: " . ($confirmacao ? 'SIM' : 'NÃO'), 'PROCESSAR_CONFIRMACAO_PERFIL');
+            
+            if (!$confirmacao) {
+                pedidos_error_log("Token inválido ou já utilizado: {$token}", 'PROCESSAR_CONFIRMACAO_PERFIL');
+                $this->exibir_pagina_confirmacao('error', 'Token inválido ou já utilizado.');
+                return;
+            }
+            
+            pedidos_debug_log("Dados da confirmação: " . print_r($confirmacao, true), 'PROCESSAR_CONFIRMACAO_PERFIL');
+            
+            // Verificar se o token não expirou
+            if (strtotime($confirmacao->data_expiracao) < time()) {
+                $this->exibir_pagina_confirmacao('error', 'Token expirado. Solicite um novo link de confirmação.');
+                return;
+            }
+            
+            // Buscar o pedido na nossa tabela primeiro
+            $table_pedidos = $wpdb->prefix . 'pedidos_processados';
+            $pedido_interno = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM {$table_pedidos} WHERE id = %d",
+                $confirmacao->pedido_id
+            ));
+            
+            if (!$pedido_interno) {
+                $this->exibir_pagina_confirmacao('error', 'Pedido interno não encontrado.');
+                return;
+            }
+            
+            // Agora buscar o pedido WooCommerce usando o order_id
+            $order = wc_get_order($pedido_interno->order_id);
+            if (!$order) {
+                $this->exibir_pagina_confirmacao('error', 'Pedido WooCommerce não encontrado.');
+                return;
+            }
+            
+            // Atualizar meta do item
+            wc_update_order_item_meta($confirmacao->item_id, 'Status do Perfil', 'Público');
+            
+            // Marcar confirmação como concluída
+            $wpdb->update(
+                $table_name,
+                [
+                    'status' => 'confirmed',
+                    'data_confirmacao' => current_time('mysql')
+                ],
+                ['id' => $confirmacao->id],
+                ['%s', '%s'],
+                ['%d']
+            );
+            
+            // Atualizar status do pedido para reprocessar
+            $this->reprocessar_pedido_apos_confirmacao($pedido_interno->order_id);
+            
+            pedidos_success_log("Perfil confirmado como público para pedido #{$confirmacao->pedido_id}", 'PROCESSAR_CONFIRMACAO_PERFIL');
+            
+            $this->exibir_pagina_confirmacao('success', 'Perfil confirmado como público! Seu pedido será processado em breve.');
+            
+        } catch (Exception $e) {
+            pedidos_error_log("Erro ao processar confirmação de perfil: " . $e->getMessage(), 'PROCESSAR_CONFIRMACAO_PERFIL');
+            $this->exibir_pagina_confirmacao('error', 'Erro interno. Tente novamente mais tarde.');
+        }
+    }
+    
+    /**
+     * Reprocessar pedido após confirmação
+     */
+    private function reprocessar_pedido_apos_confirmacao($order_id) {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'pedidos_processados';
+        
+        // Buscar pedidos pendentes para este order_id
+        $pedidos = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM {$table_name} WHERE order_id = %d AND status_api = 'pending'",
+            $order_id
+        ));
+        
+        foreach ($pedidos as $pedido) {
+            // Atualizar para reprocessar
+            $wpdb->update(
+                $table_name,
+                [
+                    'status_api' => 'pending',
+                    'tentativas' => 0,
+                    'proxima_tentativa' => date('Y-m-d H:i:s', strtotime('+1 minute')),
+                    'mensagem_api' => 'Aguardando reprocessamento após confirmação de perfil público',
+                    'data_atualizacao' => current_time('mysql')
+                ],
+                ['id' => $pedido->id],
+                ['%s', '%d', '%s', '%s', '%s'],
+                ['%d']
+            );
+        }
+        
+        pedidos_success_log("Pedido #{$order_id} marcado para reprocessamento", 'REPROCESSAR_PEDIDO_APOS_CONFIRMACAO');
+    }
+    
+    /**
+     * Exibir página de confirmação
+     */
+    private function exibir_pagina_confirmacao($tipo, $mensagem) {
+        // Definir headers para evitar cache
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        
+        $titulo = ($tipo === 'success') ? '✅ Confirmação Realizada!' : '❌ Erro na Confirmação';
+        $cor = ($tipo === 'success') ? '#28a745' : '#dc3545';
+        
+        echo '<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>' . esc_html($titulo) . '</title>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    line-height: 1.6; 
+                    color: #333; 
+                    max-width: 600px; 
+                    margin: 50px auto; 
+                    padding: 20px; 
+                    background: #f5f5f5;
+                }
+                .container { 
+                    background: white; 
+                    padding: 40px; 
+                    border-radius: 10px; 
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    text-align: center;
+                }
+                .icon { 
+                    font-size: 48px; 
+                    margin-bottom: 20px; 
+                }
+                .title { 
+                    color: ' . $cor . '; 
+                    font-size: 24px; 
+                    margin-bottom: 20px; 
+                }
+                .message { 
+                    font-size: 16px; 
+                    margin-bottom: 30px; 
+                }
+                .btn { 
+                    display: inline-block; 
+                    background: #007cba; 
+                    color: white; 
+                    padding: 12px 24px; 
+                    text-decoration: none; 
+                    border-radius: 5px; 
+                    font-weight: bold; 
+                }
+                .btn:hover { 
+                    background: #005a87; 
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="icon">' . ($tipo === 'success' ? '✅' : '❌') . '</div>
+                <h1 class="title">' . esc_html($titulo) . '</h1>
+                <p class="message">' . esc_html($mensagem) . '</p>
+                <a href="' . home_url() . '" class="btn">Voltar ao Site</a>
+            </div>
+        </body>
+        </html>';
+        
+        exit;
+    }
+    
+    /**
      * Marcar pedido com erro
      */
     private function marcar_pedido_erro($pedido, $mensagem) {
@@ -2034,6 +3063,7 @@ class PedidosProcessandoPlugin {
         }
     }
     
+    
     /**
      * Enviar para API SMM usando o módulo SMM
      */
@@ -2058,19 +3088,26 @@ class PedidosProcessandoPlugin {
             
             pedidos_api_smm_log('Provedores encontrados: ' . count($providers), 'ENVIAR_API_SMM');
             
-            // Usar o primeiro provedor ativo (mesma lógica do teste)
-            $active_provider = null;
-            foreach ($providers as $provider_id => $provider) {
-                if ($provider['status'] === 'active') {
-                    $active_provider = $provider;
-                    break;
+            // Obter provedor do produto ou usar o padrão
+            $provider_id = '';
+            if (class_exists('SMMModule')) {
+                $provider_id = SMMModule::get_product_provider($pedido->produto_id);
+                if (empty($provider_id)) {
+                    $provider_id = get_option('smm_default_provider', '');
+                    pedidos_warning_log("Provedor individual não encontrado para produto #{$pedido->produto_id}, usando provedor padrão: {$provider_id}", 'ENVIAR_API_SMM');
+                } else {
+                    pedidos_success_log("Provedor individual encontrado para produto #{$pedido->produto_id}: {$provider_id}", 'ENVIAR_API_SMM');
                 }
+            } else {
+                $provider_id = get_option('smm_default_provider', '');
             }
             
-            if (!$active_provider) {
-                pedidos_api_smm_log('Nenhum provedor SMM ativo para pedido ' . $pedido->order_id, 'ENVIAR_API_SMM');
+            if (empty($provider_id) || !isset($providers[$provider_id])) {
+                pedidos_api_smm_log('Provedor não configurado ou inválido para pedido ' . $pedido->order_id, 'ENVIAR_API_SMM');
                 return false;
             }
+            
+            $active_provider = $providers[$provider_id];
             
             pedidos_api_smm_log("Provedor ativo encontrado: {$active_provider['name']}", 'ENVIAR_API_SMM');
             pedidos_api_smm_log("URL da API: {$active_provider['api_url']}", 'ENVIAR_API_SMM');
@@ -2098,8 +3135,8 @@ class PedidosProcessandoPlugin {
                 'link' => $pedido->instagram_username,       // Username do Instagram do pedido
                 'quantity' => $pedido->quantidade_variacao,  // Quantidade da variação do produto
                 'runs' => 1,                                 // Uma execução
-                'interval' => 0,                             // Sem intervalo
-                'comments' => 'Pedido WooCommerce #' . $pedido->order_id . ' - Produto: ' . $pedido->produto_id
+                'interval' => 0                              // Sem intervalo
+                // Comentários serão adicionados pela lógica específica se necessário
             ];
             
             pedidos_api_smm_log('Dados preparados para envio', 'ENVIAR_API_SMM');
@@ -2145,21 +3182,420 @@ class PedidosProcessandoPlugin {
     }
     
     /**
-     * Obter Service ID diretamente do pedido
+     * Processar pedido distribuído (com links de publicações/reels)
+     */
+    private function processar_pedido_distribuido($pedido) {
+        pedidos_step_log("Processando pedido distribuído #{$pedido->order_id}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+        pedidos_debug_log("Dados do pedido distribuído: ID={$pedido->id}, Order ID={$pedido->order_id}, Produto ID={$pedido->produto_id}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+        
+        try {
+            // Obter informações do pedido WooCommerce
+            $order = wc_get_order($pedido->order_id);
+            pedidos_debug_log("Order WooCommerce carregado: " . ($order ? "SIM" : "NÃO"), 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+            
+            if (!$order) {
+                pedidos_error_log("Pedido WooCommerce #{$pedido->order_id} não encontrado", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                return false;
+            }
+            
+            // Buscar item do pedido
+            $items = $order->get_items();
+            pedidos_debug_log("Total de itens no pedido: " . count($items), 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+            
+            $item = null;
+            foreach ($items as $order_item) {
+                pedidos_debug_log("Verificando item - Product ID: {$order_item->get_product_id()}, Variation ID: {$order_item->get_variation_id()}, Item ID: {$order_item->get_id()}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                // Verificar se é o produto direto ou uma variação
+                if ($order_item->get_product_id() == $pedido->produto_id || 
+                    $order_item->get_variation_id() == $pedido->produto_id) {
+                    $item = $order_item;
+                    pedidos_debug_log("Item encontrado: {$order_item->get_id()}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                    break;
+                }
+            }
+            
+            if (!$item) {
+                pedidos_error_log("Item do pedido #{$pedido->order_id} não encontrado", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                return false;
+            }
+            
+            // Obter informações de distribuição
+            $produto = $item->get_product();
+            $produto_nome = $produto ? $produto->get_name() : $item->get_name();
+            pedidos_debug_log("Produto do item: {$produto_nome}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+            
+            pedidos_debug_log("Chamando get_distribution_info com item_id={$item->get_id()}, product_id={$pedido->produto_id}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+            $distribution_info = SMMCategoryRules::get_distribution_info([
+                'item_id' => $item->get_id(),
+                'product_id' => $pedido->produto_id
+            ]);
+            
+            pedidos_debug_log("Resultado get_distribution_info: " . print_r($distribution_info, true), 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+            
+            if (!$distribution_info['is_distributed'] || empty($distribution_info['links'])) {
+                pedidos_error_log("Pedido #{$pedido->order_id} não tem links distribuídos válidos", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                $this->marcar_pedido_erro($pedido, 'Links distribuídos não encontrados');
+                return false;
+            }
+            
+            pedidos_success_log("Processando {$distribution_info['total_quantity']} links distribuídos", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+            
+            // Obter Service ID
+            $service_id = $this->obter_service_id_do_pedido($pedido);
+            if ($service_id === false) {
+                pedidos_error_log("Service ID não encontrado para pedido distribuído #{$pedido->order_id}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                return false;
+            }
+            
+            // Processar cada link distribuído
+            $sucessos = 0;
+            $erros = 0;
+            
+            foreach ($distribution_info['links'] as $index => $link) {
+                pedidos_step_log("Processando link " . ($index + 1) . "/" . count($distribution_info['links']) . " - {$link['type']}: {$link['id']}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                
+                // Calcular quantidade para este link
+                $quantidade_por_link = intval($pedido->quantidade_variacao / count($distribution_info['links']));
+                $quantidade_restante = $pedido->quantidade_variacao % count($distribution_info['links']);
+                
+                if ($index < $quantidade_restante) {
+                    $quantidade_por_link++;
+                }
+                
+                // Aplicar multiplicador
+                $quantidade_por_link *= $distribution_info['multiplier'];
+                
+                if ($quantidade_por_link <= 0) {
+                    pedidos_warning_log("Quantidade inválida para link {$link['id']}: {$quantidade_por_link}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                    continue;
+                }
+                
+                // Enviar pedido individual para este link
+                $resultado = $this->enviar_pedido_distribuido_individual($pedido, $link, $quantidade_por_link, $service_id);
+                
+                if ($resultado) {
+                    $sucessos++;
+                    pedidos_success_log("Link {$link['id']} processado com sucesso", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                } else {
+                    $erros++;
+                    pedidos_error_log("Erro ao processar link {$link['id']}", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                }
+            }
+            
+            // Atualizar status do pedido
+            if ($sucessos > 0) {
+                $this->marcar_pedido_sucesso($pedido, "Processado: {$sucessos} links com sucesso, {$erros} erros");
+                pedidos_success_log("Pedido distribuído #{$pedido->order_id} processado: {$sucessos} sucessos, {$erros} erros", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                return true;
+            } else {
+                $this->marcar_pedido_erro($pedido, "Nenhum link processado com sucesso");
+                pedidos_error_log("Pedido distribuído #{$pedido->order_id} falhou: todos os links falharam", 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+                return false;
+            }
+            
+        } catch (Exception $e) {
+            pedidos_error_log("Erro ao processar pedido distribuído #{$pedido->order_id}: " . $e->getMessage(), 'PROCESSAR_PEDIDO_DISTRIBUIDO');
+            $this->marcar_pedido_erro($pedido, 'Erro interno: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Enviar pedido individual distribuído para API SMM
+     */
+    private function enviar_pedido_distribuido_individual($pedido, $link, $quantidade, $service_id) {
+        pedidos_step_log("Enviando pedido individual para {$link['type']} {$link['id']} - Quantidade: {$quantidade}", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+        pedidos_debug_log("Dados do link: " . print_r($link, true), 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+        pedidos_debug_log("Quantidade: {$quantidade}, Service ID: {$service_id}", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+        
+        try {
+            // Obter provedor ativo
+            $providers = get_option('smm_providers', []);
+            if (empty($providers)) {
+                pedidos_error_log('Nenhum provedor SMM configurado', 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                return false;
+            }
+            
+            // Usar provedor padrão ou do produto
+            $provider_id = '';
+            if (class_exists('SMMModule')) {
+                $provider_id = SMMModule::get_product_provider($pedido->produto_id);
+                if (empty($provider_id)) {
+                    $provider_id = get_option('smm_default_provider', '');
+                }
+            }
+            
+            if (empty($provider_id) || !isset($providers[$provider_id])) {
+                pedidos_error_log('Provedor SMM não encontrado', 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                return false;
+            }
+            
+            $active_provider = $providers[$provider_id];
+            
+            // Criar instância da API SMM
+            $smm_api = new SMMApi();
+            $smm_api->api_url = $active_provider['api_url'];
+            $smm_api->api_key = $active_provider['api_key'];
+            $smm_api->timeout = 30;
+            
+            // Obter tipo de lógica do produto
+            $product_id = $pedido->produto_id;
+            if (class_exists('SMMCategoryRules')) {
+                $product_id = SMMCategoryRules::get_parent_product_id($product_id);
+            }
+            $logic_type = get_post_meta($product_id, '_smm_logic_type', true);
+            
+            // Preparar dados do pedido
+            $order_data = [
+                'service' => $service_id,
+                'link' => $link['url'],
+                'quantity' => $quantidade,
+                'runs' => 1
+            ];
+            
+            // Verificar se é produto de comentários + IA
+            if ($logic_type === 'comentarios_ia') {
+                pedidos_debug_log("Produto de comentários + IA detectado - Iniciando geração inteligente", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                
+                try {
+                    // Instanciar módulos de scraping e geração
+                    $scraper = new InstagramScraper();
+                    $generator = new GeminiCommentsGenerator();
+                    
+                    pedidos_debug_log("Fazendo scraping da publicação: " . $link['url'], 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                    
+                    // Obter informações da publicação
+                    $post_info = $scraper->get_post_info($link['url']);
+                    
+                    if ($post_info) {
+                        pedidos_debug_log("Scraping realizado com sucesso. Caption: " . substr($post_info['caption'] ?? '', 0, 100), 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                        
+                        // Baixar imagem para análise
+                        $image_path = null;
+                        if (!empty($post_info['display_url'])) {
+                            $image_path = $scraper->download_image($post_info['display_url']);
+                            pedidos_debug_log("Imagem baixada: " . ($image_path ? 'SIM' : 'NÃO'), 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                        }
+                        
+                        // Gerar comentários inteligentes
+                        pedidos_debug_log("Gerando comentários com Gemini 2.5 Pro (quantidade: {$quantidade})", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                        $generated_comments = $generator->generate_comments($post_info, $quantidade, $image_path);
+                        
+                        // Limpar arquivo temporário
+                        if ($image_path) {
+                            $scraper->cleanup_temp_files($image_path);
+                        }
+                        
+                        if (!empty($generated_comments)) {
+                            $order_data['comments'] = implode("\n", $generated_comments);
+                            unset($order_data['quantity']); // Não enviar quantity para comentários
+                            
+                            pedidos_debug_log("Comentários gerados com sucesso (" . count($generated_comments) . " comentários)", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                            pedidos_debug_log("Comentários: " . $order_data['comments'], 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                        } else {
+                            throw new Exception('Nenhum comentário foi gerado');
+                        }
+                        
+                    } else {
+                        throw new Exception('Falha no scraping da publicação');
+                    }
+                    
+                } catch (Exception $e) {
+                    pedidos_error_log("ERRO na geração de comentários IA: " . $e->getMessage(), 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                    
+                    // Fallback para comentários pré-definidos
+                    pedidos_debug_log("Usando comentários de fallback", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                    $fallback_comments = [
+                        'Que foto incrível! 😍',
+                        'Adorei esse post ✨',
+                        'Perfeita como sempre!',
+                        'Que estilo! 🔥'
+                    ];
+                    
+                    $selected_comments = array_slice($fallback_comments, 0, min($quantidade, count($fallback_comments)));
+                    $order_data['comments'] = implode("\n", $selected_comments);
+                    unset($order_data['quantity']); // Não enviar quantity para comentários
+                    
+                    pedidos_debug_log("Comentários de fallback aplicados", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                }
+            }
+            
+            pedidos_data_log($order_data, 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL - Dados do pedido');
+            pedidos_debug_log("Enviando para API SMM - Link: {$link['url']} | Quantidade: {$quantidade} | Service: {$service_id}", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+            
+            // Enviar para API (usar método apropriado baseado no tipo)
+            if (isset($order_data['comments'])) {
+                pedidos_debug_log("Enviando pedido com comentários usando orderWithComments", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                $resultado = $smm_api->orderWithComments($order_data);
+            } else {
+                pedidos_debug_log("Enviando pedido padrão usando order", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                $resultado = $smm_api->order($order_data);
+            }
+            
+            if (isset($resultado->error)) {
+                pedidos_error_log("Erro na API SMM para link {$link['id']}: " . $resultado->error, 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+                return false;
+            }
+            
+            // Salvar informações do pedido SMM
+            $smm_order_id = $resultado->order ?? 'N/A';
+            $charge = $resultado->charge ?? 0;
+            
+            pedidos_success_log("Pedido SMM criado para link {$link['id']}: #{$smm_order_id} (Custo: {$charge})", 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+            
+            // Salvar ID do pedido SMM no banco e atualizar status
+            $this->salvar_id_pedido_smm($pedido->id, $smm_order_id);
+            
+            return true;
+            
+        } catch (Exception $e) {
+            pedidos_error_log("Erro ao enviar pedido distribuído individual: " . $e->getMessage(), 'ENVIAR_PEDIDO_DISTRIBUIDO_INDIVIDUAL');
+            return false;
+        }
+    }
+    
+    /**
+     * Obter Service ID diretamente do produto via wp_postmeta
      */
     private function obter_service_id_do_pedido($pedido) {
-        pedidos_step_log("Obtendo Service ID do pedido #{$pedido->order_id}", 'OBTER_SERVICE_ID');
+        pedidos_step_log("Obtendo Service ID do produto #{$pedido->produto_id} para pedido #{$pedido->order_id}", 'OBTER_SERVICE_ID');
         
-        // Buscar o Service ID salvo no pedido
-        $service_id = $pedido->service_id_pedido;
+        $produto_id = $pedido->produto_id;
+        $produto = wc_get_product($produto_id);
         
-        if (empty($service_id) || !is_numeric($service_id)) {
-            pedidos_error_log('Service ID não encontrado no pedido #' . $pedido->order_id . '. Verifique se foi configurado no produto.', 'OBTER_SERVICE_ID');
+        if (!$produto) {
+            pedidos_error_log("Produto #{$produto_id} não encontrado", 'OBTER_SERVICE_ID');
             return false;
         }
         
-        pedidos_success_log('Service ID encontrado no pedido #' . $pedido->order_id . ': ' . $service_id, 'OBTER_SERVICE_ID');
+        // Usar o novo sistema de mapeamento se disponível
+        if (class_exists('SMMModule')) {
+            $service_id = SMMModule::get_product_service_id($produto_id);
+            
+            if (!empty($service_id) && is_numeric($service_id)) {
+                pedidos_success_log("Service ID obtido via SMMModule para produto #{$produto_id}: {$service_id}", 'OBTER_SERVICE_ID');
+                return intval($service_id);
+            }
+        }
+        
+        // Fallback: usar mapeamento manual se SMMModule não funcionar
+        if ($produto->is_type('variation')) {
+            pedidos_step_log("Produto é variação, aplicando mapeamento BR/Internacional", 'OBTER_SERVICE_ID');
+            
+            // Obter produto pai
+            $parent_id = $produto->get_parent_id();
+            $parent_product = wc_get_product($parent_id);
+            
+            if (!$parent_product) {
+                pedidos_error_log("Produto pai #{$parent_id} não encontrado para variação #{$produto_id}", 'OBTER_SERVICE_ID');
+                return false;
+            }
+            
+            // Detectar tipo da variação (BR ou Internacional)
+            $variation_type = $this->detect_variation_type($produto);
+            pedidos_step_log("Tipo detectado para variação #{$produto_id}: {$variation_type}", 'OBTER_SERVICE_ID');
+            
+            // Obter Service ID baseado no tipo
+            if ($variation_type === 'br') {
+                $service_id = get_post_meta($parent_id, '_smm_service_id_br', true);
+                if (empty($service_id)) {
+                    $service_id = get_post_meta($parent_id, '_smm_service_id', true);
+                    pedidos_warning_log("Service ID BR não configurado para produto #{$parent_id}, usando padrão: {$service_id}", 'OBTER_SERVICE_ID');
+                } else {
+                    pedidos_success_log("Service ID BR obtido para variação #{$produto_id}: {$service_id}", 'OBTER_SERVICE_ID');
+                }
+            } else {
+                $service_id = get_post_meta($parent_id, '_smm_service_id_internacional', true);
+                if (empty($service_id)) {
+                    $service_id = get_post_meta($parent_id, '_smm_service_id', true);
+                    pedidos_warning_log("Service ID Internacional não configurado para produto #{$parent_id}, usando padrão: {$service_id}", 'OBTER_SERVICE_ID');
+                } else {
+                    pedidos_success_log("Service ID Internacional obtido para variação #{$produto_id}: {$service_id}", 'OBTER_SERVICE_ID');
+                }
+            }
+        } else {
+            // Produto simples - usar Service ID padrão
+            $service_id = get_post_meta($produto_id, '_smm_service_id', true);
+            pedidos_step_log("Produto simples #{$produto_id}, usando Service ID padrão: {$service_id}", 'OBTER_SERVICE_ID');
+        }
+        
+        // Fallback final: Service ID global
+        if (empty($service_id) || !is_numeric($service_id)) {
+            if (class_exists('SMMModule')) {
+                $service_id = SMMModule::get_global_service_id();
+                pedidos_warning_log("Service ID individual não encontrado para produto #{$produto_id}, usando Service ID global: {$service_id}", 'OBTER_SERVICE_ID');
+            }
+            
+            if (empty($service_id) || !is_numeric($service_id)) {
+                pedidos_error_log('Service ID não encontrado para produto #' . $produto_id . ' nem global. Verifique se foi configurado.', 'OBTER_SERVICE_ID');
+                return false;
+            }
+        }
+        
         return intval($service_id);
+    }
+    
+    /**
+     * Detectar tipo de variação (BR ou Internacional)
+     * Baseado nos padrões: "Brasileiros" = BR, "Globais" = Internacional
+     */
+    private function detect_variation_type($variation) {
+        if (!$variation || !is_object($variation)) {
+            return 'internacional'; // Default
+        }
+        
+        // 1. Verificar atributos da variação
+        $attributes = $variation->get_attributes();
+        
+        foreach ($attributes as $key => $value) {
+            $value_lower = strtolower(trim($value));
+            
+            // Padrões para Brasil (baseado na imagem: "Brasileiros")
+            $br_patterns = ['br', 'brasil', 'brasileiro', 'brasileira', 'brasileiros', 'nacional', 'brazil'];
+            if (in_array($value_lower, $br_patterns)) {
+                return 'br';
+            }
+            
+            // Padrões para Internacional (baseado na imagem: "Globais")
+            $int_patterns = ['int', 'internacional', 'global', 'globais', 'worldwide', 'international', 'extern', 'externo'];
+            if (in_array($value_lower, $int_patterns)) {
+                return 'internacional';
+            }
+        }
+        
+        // 2. Verificar nome da variação
+        $variation_name = strtolower($variation->get_name());
+        
+        // Padrões no nome para Brasil
+        $br_name_patterns = ['br', 'brasil', 'brasileiro', 'brasileiros', 'nacional'];
+        foreach ($br_name_patterns as $pattern) {
+            if (strpos($variation_name, $pattern) !== false) {
+                return 'br';
+            }
+        }
+        
+        // Padrões no nome para Internacional
+        $int_name_patterns = ['int', 'internacional', 'global', 'globais', 'international'];
+        foreach ($int_name_patterns as $pattern) {
+            if (strpos($variation_name, $pattern) !== false) {
+                return 'internacional';
+            }
+        }
+        
+        // 3. Verificar SKU da variação
+        $sku = strtolower($variation->get_sku());
+        if (!empty($sku)) {
+            if (strpos($sku, 'br') !== false || strpos($sku, 'brasil') !== false) {
+                return 'br';
+            }
+            
+            if (strpos($sku, 'int') !== false || strpos($sku, 'global') !== false) {
+                return 'internacional';
+            }
+        }
+        
+        // Default: Internacional
+        return 'internacional';
     }
     
     /**
@@ -2272,6 +3708,20 @@ function criar_tabela_pedidos_processados_ativacao() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'pedidos_processados';
     
+    // Verificar se a tabela já existe
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {
+        // Tabela já existe, verificar se precisa de alterações
+        $charset_collate = $wpdb->get_charset_collate();
+        
+        // Verificar se a chave UNIQUE já existe
+        $result = $wpdb->get_results("SHOW INDEX FROM $table_name WHERE Key_name = 'order_id'");
+        if (empty($result)) {
+            // Adicionar chave UNIQUE se não existir
+            $wpdb->query("ALTER TABLE $table_name ADD UNIQUE KEY `order_id` (`order_id`)");
+        }
+        return;
+    }
+    
     $charset_collate = $wpdb->get_charset_collate();
     
     $sql = "CREATE TABLE $table_name (
@@ -2311,6 +3761,7 @@ if (file_exists(plugin_dir_path(__FILE__) . 'modules/smm/load-smm.php')) {
     require_once plugin_dir_path(__FILE__) . 'modules/smm/load-smm.php';
 }
 
+
 // Registrar hooks de ativação/desativação (deve vir depois da definição das funções)
 register_activation_hook(__FILE__, 'criar_tabela_pedidos_processados_ativacao');
 register_deactivation_hook(__FILE__, 'limpar_cron_pedidos_processados_desativacao');
@@ -2324,4 +3775,5 @@ try {
 } catch (Exception $e) {
     pedidos_error_log('Erro ao inicializar plugin: ' . $e->getMessage(), 'PLUGIN_INIT');
 }
+
 

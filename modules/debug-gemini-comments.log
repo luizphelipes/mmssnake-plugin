@@ -1,0 +1,457 @@
+[2025-09-17 22:12:51] === TESTE DE CONECTIVIDADE GEMINI ===
+[2025-09-17 22:12:51] Fazendo requisição para Gemini...
+[2025-09-17 22:12:51] URL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyAil2qyZbLII3Iw6CaqvSPo38bdKLdoC6w
+[2025-09-17 22:12:51] Body size: 85 bytes
+[2025-09-17 22:12:52] Código de resposta: 200
+[2025-09-17 22:12:52] Resposta (primeiros 300 chars): {
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Conexão OK.\n"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "avgLogprobs": -0.022760048508644104
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 11
+[2025-09-17 22:12:52] TESTE: Conectividade OK
+[2025-09-17 22:13:22] === INICIANDO GERAÇÃO DE COMENTÁRIOS ===
+[2025-09-17 22:13:22] Quantidade solicitada: 250
+[2025-09-17 22:13:22] Post ID: 3531054105243763585
+[2025-09-17 22:13:22] Imagem fornecida: NÃO
+[2025-09-17 22:13:22] Construindo prompt...
+[2025-09-17 22:13:22] Prompt construído com 1149 caracteres
+[2025-09-17 22:13:22] Construindo dados da requisição...
+[2025-09-17 22:13:22] Fazendo requisição para Gemini...
+[2025-09-17 22:13:22] URL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyAil2qyZbLII3Iw6CaqvSPo38bdKLdoC6w
+[2025-09-17 22:13:22] Body size: 1468 bytes
+[2025-09-17 22:13:30] Código de resposta: 200
+[2025-09-17 22:13:30] Resposta (primeiros 300 chars): {
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "🚀 Que demais! Vou testar agora mesmo!\nR$5? Super acessível, adorei! 🤩\nPreciso disso! Já vou conferir!\nSem cadastro? Top demais! Facilidade é tudo! 😉\nPede Pra Seguir salvando o dia! 🙌\n
+[2025-09-17 22:13:30] Processando resposta do Gemini...
+[2025-09-17 22:13:30] Texto gerado: 🚀 Que demais! Vou testar agora mesmo!
+R$5? Super acessível, adorei! 🤩
+Preciso disso! Já vou conferir!
+Sem cadastro? Top demais! Facilidade é tudo! 😉
+Pede Pra Seguir salvando o dia! 🙌
+Se...
+[2025-09-17 22:13:30] Comentários processados: 100
+[2025-09-17 22:13:30] Comentário 1: 🚀 Que demais! Vou testar agora mesmo!
+[2025-09-17 22:13:30] Comentário 2: R$5? Super acessível, adorei! 🤩
+[2025-09-17 22:13:30] Comentário 3: Preciso disso! Já vou conferir!
+[2025-09-17 22:13:30] Comentário 4: Sem cadastro? Top demais! Facilidade é tudo! 😉
+[2025-09-17 22:13:30] Comentário 5: Pede Pra Seguir salvando o dia! 🙌
+[2025-09-17 22:13:30] Comentário 6: Segurança em primeiro lugar, isso que importa!
+[2025-09-17 22:13:30] Comentário 7: Vou testar, depois conto o que achei!
+[2025-09-17 22:13:30] Comentário 8: Que praticidade! Já quero ver os resultados!
+[2025-09-17 22:13:30] Comentário 9: R$5? Tá valendo super a pena! 🤑
+[2025-09-17 22:13:30] Comentário 10: Amei a proposta, vou experimentar!
+[2025-09-17 22:13:30] Comentário 11: Super interessante, preciso testar!
+[2025-09-17 22:13:30] Comentário 12: Já estou indo lá conferir! 🏃‍♀️
+[2025-09-17 22:13:30] Comentário 13: Privacidade e segurança, tudo que eu preciso!
+[2025-09-17 22:13:30] Comentário 14: Show de bola, adorei a iniciativa! 👍
+[2025-09-17 22:13:30] Comentário 15: Muito bom saber disso, obrigada!
+[2025-09-17 22:13:30] Comentário 16: Vou indicar para os meus amigos!
+[2025-09-17 22:13:30] Comentário 17: Que bacana, vou dar uma olhada! 👀
+[2025-09-17 22:13:30] Comentário 18: Amei a dica, vou experimentar!
+[2025-09-17 22:13:30] Comentário 19: Super útil, valeu a informação!
+[2025-09-17 22:13:30] Comentário 20: Já quero ver a diferença no meu perfil!
+[2025-09-17 22:13:30] Comentário 21: Que legal, vou testar com certeza! 😊
+[2025-09-17 22:13:30] Comentário 22: Isso é tudo que eu precisava!
+[2025-09-17 22:13:30] Comentário 23: Amei a praticidade, já vou usar!
+[2025-09-17 22:13:30] Comentário 24: Super interessante, vou dar uma olhada!
+[2025-09-17 22:13:30] Comentário 25: Show, vou testar agora mesmo!
+[2025-09-17 22:13:30] Comentário 26: Que top, adorei a novidade!
+[2025-09-17 22:13:30] Comentário 27: Vou experimentar, parece ser muito bom!
+[2025-09-17 22:13:30] Comentário 28: Amei a dica, obrigada por compartilhar!
+[2025-09-17 22:13:30] Comentário 29: Super prático, já quero usar!
+[2025-09-17 22:13:30] Comentário 30: Que bacana, vou dar uma olhada com certeza!
+[2025-09-17 22:13:30] Comentário 31: Show de bola, parabéns pela iniciativa!
+[2025-09-17 22:13:30] Comentário 32: Amei a facilidade, já vou testar!
+[2025-09-17 22:13:30] Comentário 33: Super útil, valeu a dica!
+[2025-09-17 22:13:30] Comentário 34: Que legal, vou experimentar!
+[2025-09-17 22:13:30] Comentário 35: Isso é tudo que eu precisava! 🙏
+[2025-09-17 22:13:30] Comentário 36: Amei a praticidade, já vou usar!
+[2025-09-17 22:13:30] Comentário 37: Super interessante, vou dar uma olhada!
+[2025-09-17 22:13:30] Comentário 38: Show, vou testar agora mesmo!
+[2025-09-17 22:13:30] Comentário 39: Que top, adorei a novidade!
+[2025-09-17 22:13:30] Comentário 40: Vou experimentar, parece ser muito bom!
+[2025-09-17 22:13:30] Comentário 41: Amei a dica, obrigada por compartilhar!
+[2025-09-17 22:13:30] Comentário 42: Super prático, já quero usar!
+[2025-09-17 22:13:30] Comentário 43: Que bacana, vou dar uma olhada com certeza!
+[2025-09-17 22:13:30] Comentário 44: Show de bola, parabéns pela iniciativa!
+[2025-09-17 22:13:30] Comentário 45: Amei a facilidade, já vou testar!
+[2025-09-17 22:13:30] Comentário 46: Super útil, valeu a dica!
+[2025-09-17 22:13:30] Comentário 47: Que legal, vou experimentar!
+[2025-09-17 22:13:30] Comentário 48: Isso é tudo que eu precisava!
+[2025-09-17 22:13:30] Comentário 49: Amei a praticidade, já vou usar!
+[2025-09-17 22:13:30] Comentário 50: Super interessante, vou dar uma olhada!
+[2025-09-17 22:13:30] Comentário 51: Show, vou testar agora mesmo!
+[2025-09-17 22:13:30] Comentário 52: Que top, adorei a novidade!
+[2025-09-17 22:13:30] Comentário 53: Vou experimentar, parece ser muito bom!
+[2025-09-17 22:13:30] Comentário 54: Amei a dica, obrigada por compartilhar!
+[2025-09-17 22:13:30] Comentário 55: Super prático, já quero usar!
+[2025-09-17 22:13:30] Comentário 56: Que bacana, vou dar uma olhada com certeza!
+[2025-09-17 22:13:30] Comentário 57: Show de bola, parabéns pela iniciativa!
+[2025-09-17 22:13:30] Comentário 58: Amei a facilidade, já vou testar!
+[2025-09-17 22:13:30] Comentário 59: Super útil, valeu a dica!
+[2025-09-17 22:13:30] Comentário 60: Que legal, vou experimentar!
+[2025-09-17 22:13:30] Comentário 61: Isso é tudo que eu precisava!
+[2025-09-17 22:13:30] Comentário 62: Amei a praticidade, já vou usar!
+[2025-09-17 22:13:30] Comentário 63: Super interessante, vou dar uma olhada!
+[2025-09-17 22:13:30] Comentário 64: Show, vou testar agora mesmo!
+[2025-09-17 22:13:30] Comentário 65: Que top, adorei a novidade!
+[2025-09-17 22:13:30] Comentário 66: Vou experimentar, parece ser muito bom!
+[2025-09-17 22:13:30] Comentário 67: Amei a dica, obrigada por compartilhar!
+[2025-09-17 22:13:30] Comentário 68: Super prático, já quero usar!
+[2025-09-17 22:13:30] Comentário 69: Que bacana, vou dar uma olhada com certeza!
+[2025-09-17 22:13:30] Comentário 70: Show de bola, parabéns pela iniciativa!
+[2025-09-17 22:13:30] Comentário 71: Amei a facilidade, já vou testar!
+[2025-09-17 22:13:30] Comentário 72: Super útil, valeu a dica!
+[2025-09-17 22:13:30] Comentário 73: Que legal, vou experimentar!
+[2025-09-17 22:13:30] Comentário 74: Isso é tudo que eu precisava!
+[2025-09-17 22:13:30] Comentário 75: Amei a praticidade, já vou usar!
+[2025-09-17 22:13:30] Comentário 76: Super interessante, vou dar uma olhada!
+[2025-09-17 22:13:30] Comentário 77: Show, vou testar agora mesmo!
+[2025-09-17 22:13:30] Comentário 78: Que top, adorei a novidade!
+[2025-09-17 22:13:30] Comentário 79: Vou experimentar, parece ser muito bom!
+[2025-09-17 22:13:30] Comentário 80: Amei a dica, obrigada por compartilhar!
+[2025-09-17 22:13:30] Comentário 81: Super prático, já quero usar!
+[2025-09-17 22:13:30] Comentário 82: Que bacana, vou dar uma olhada com certeza!
+[2025-09-17 22:13:30] Comentário 83: Show de bola, parabéns pela iniciativa!
+[2025-09-17 22:13:30] Comentário 84: Amei a facilidade, já vou testar!
+[2025-09-17 22:13:30] Comentário 85: Super útil, valeu a dica!
+[2025-09-17 22:13:30] Comentário 86: Que legal, vou experimentar!
+[2025-09-17 22:13:30] Comentário 87: Isso é tudo que eu precisava!
+[2025-09-17 22:13:30] Comentário 88: Amei a praticidade, já vou usar!
+[2025-09-17 22:13:30] Comentário 89: Super interessante, vou dar uma olhada!
+[2025-09-17 22:13:30] Comentário 90: Show, vou testar agora mesmo!
+[2025-09-17 22:13:30] Comentário 91: Que top, adorei a novidade!
+[2025-09-17 22:13:30] Comentário 92: Vou experimentar, parece ser muito bom!
+[2025-09-17 22:13:30] Comentário 93: Amei a dica, obrigada por compartilhar!
+[2025-09-17 22:13:30] Comentário 94: Super prático, já quero usar!
+[2025-09-17 22:13:30] Comentário 95: Que bacana, vou dar uma olhada com certeza!
+[2025-09-17 22:13:30] Comentário 96: Show de bola, parabéns pela iniciativa!
+[2025-09-17 22:13:30] Comentário 97: Amei a facilidade, já vou testar!
+[2025-09-17 22:13:30] Comentário 98: Super útil, valeu a dica!
+[2025-09-17 22:13:30] Comentário 99: Que legal, vou experimentar!
+[2025-09-17 22:13:30] Comentário 100: Isso é tudo que eu precisava!
+[2025-09-17 22:13:30] Comentários gerados com sucesso: 100
+[2025-09-17 22:13:30] === GERAÇÃO CONCLUÍDA ===
+[2025-09-17 22:15:35] === INICIANDO GERAÇÃO DE COMENTÁRIOS ===
+[2025-09-17 22:15:35] Quantidade solicitada: 10
+[2025-09-17 22:15:35] Post ID: 3531829415309077782
+[2025-09-17 22:15:35] Imagem fornecida: NÃO
+[2025-09-17 22:15:35] Construindo prompt...
+[2025-09-17 22:15:35] Prompt construído com 1173 caracteres
+[2025-09-17 22:15:35] Construindo dados da requisição...
+[2025-09-17 22:15:35] Fazendo requisição para Gemini...
+[2025-09-17 22:15:35] URL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyAil2qyZbLII3Iw6CaqvSPo38bdKLdoC6w
+[2025-09-17 22:15:35] Body size: 1480 bytes
+[2025-09-17 22:15:39] Código de resposta: 200
+[2025-09-17 22:15:39] Resposta (primeiros 300 chars): {
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Mano, Leonardo é demais! 😂 Contando história, não tem pra ninguém!\nEita! Essa eu preciso ver inteira! 😲 Leonardo aprontando das suas...\nAlê Oliveira + Leonardo = Combinação explosiva! 🔥
+[2025-09-17 22:15:39] Processando resposta do Gemini...
+[2025-09-17 22:15:39] Texto gerado: Mano, Leonardo é demais! 😂 Contando história, não tem pra ninguém!
+Eita! Essa eu preciso ver inteira! 😲 Leonardo aprontando das suas...
+Alê Oliveira + Leonardo = Combinação explosiva! �...
+[2025-09-17 22:15:39] Comentários processados: 10
+[2025-09-17 22:15:39] Comentário 1: Mano, Leonardo é demais! 😂 Contando história, não tem pra ninguém!
+[2025-09-17 22:15:39] Comentário 2: Eita! Essa eu preciso ver inteira! 😲 Leonardo aprontando das suas...
+[2025-09-17 22:15:39] Comentário 3: Alê Oliveira + Leonardo = Combinação explosiva! 🔥 Já tô ansioso!
+[2025-09-17 22:15:39] Comentário 4: Hahahahaha! Leonardo é o rei do "causo"! 😂 Imperdível!
+[2025-09-17 22:15:39] Comentário 5: Leonardo e suas histórias... Já preparei a pipoca! 🍿
+[2025-09-17 22:15:39] Comentário 6: Aí sim! Adoro quando o Leonardo conta essas histórias!
+[2025-09-17 22:15:39] Comentário 7: Leonardo é muito figura! 😂 Essa entrevista promete!
+[2025-09-17 22:15:39] Comentário 8: Alê Oliveira tirando o melhor do Leonardo, show!
+[2025-09-17 22:15:39] Comentário 9: Leonardo é o cara! Autenticidade pura! 👏
+[2025-09-17 22:15:39] Comentário 10: Já quero saber o que ele aprontou dessa vez! 🤣
+[2025-09-17 22:15:39] Comentários gerados com sucesso: 10
+[2025-09-17 22:15:39] === GERAÇÃO CONCLUÍDA ===
+[2025-09-18 01:36:47] === INICIANDO GERAÇÃO DE COMENTÁRIOS ===
+[2025-09-18 01:36:47] Quantidade solicitada: 1000
+[2025-09-18 01:36:47] Post ID: 3300646603110562298
+[2025-09-18 01:36:47] Imagem fornecida: NÃO
+[2025-09-18 01:36:47] Construindo prompt...
+[2025-09-18 01:36:47] Prompt construído com 1043 caracteres
+[2025-09-18 01:36:47] Construindo dados da requisição...
+[2025-09-18 01:36:47] Fazendo requisição para Gemini...
+[2025-09-18 01:36:47] URL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyAil2qyZbLII3Iw6CaqvSPo38bdKLdoC6w
+[2025-09-18 01:36:47] Body size: 1338 bytes
+[2025-09-18 01:36:56] Código de resposta: 200
+[2025-09-18 01:36:56] Resposta (primeiros 300 chars): {
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Que vibe irada! 🤩\nManeiro demais o voo!\nParabéns pela aventura!\nQue visual alucinante! 😮\nShow de bola! Curtindo a vida!\nVoando alto! Adorei!\nQue demais! Quero voar também!\nA @ovniparapente
+[2025-09-18 01:36:56] Processando resposta do Gemini...
+[2025-09-18 01:36:56] Texto gerado: Que vibe irada! 🤩
+Maneiro demais o voo!
+Parabéns pela aventura!
+Que visual alucinante! 😮
+Show de bola! Curtindo a vida!
+Voando alto! Adorei!
+Que demais! Quero voar também!
+A @ovniparapente é ...
+[2025-09-18 01:36:56] Comentários processados: 117
+[2025-09-18 01:36:56] Comentário 1: Que vibe irada! 🤩
+[2025-09-18 01:36:56] Comentário 2: Maneiro demais o voo!
+[2025-09-18 01:36:56] Comentário 3: Parabéns pela aventura!
+[2025-09-18 01:36:56] Comentário 4: Que visual alucinante! 😮
+[2025-09-18 01:36:56] Comentário 5: Show de bola! Curtindo a vida!
+[2025-09-18 01:36:56] Comentário 6: Voando alto! Adorei!
+[2025-09-18 01:36:56] Comentário 7: Que demais! Quero voar também!
+[2025-09-18 01:36:56] Comentário 8: A @ovniparapente é top!
+[2025-09-18 01:36:56] Comentário 9: Sensacional! Arrasou no voo!
+[2025-09-18 01:36:56] Comentário 10: Que experiência incrível!
+[2025-09-18 01:36:56] Comentário 11: Que liberdade! Adorei o vídeo!
+[2025-09-18 01:36:56] Comentário 12: Massa demais! Voando nas alturas!
+[2025-09-18 01:36:56] Comentário 13: Adrenalina pura! Show!
+[2025-09-18 01:36:56] Comentário 14: Que vista maravilhosa! 🤩
+[2025-09-18 01:36:56] Comentário 15: Uau! Que aventura!
+[2025-09-18 01:36:56] Comentário 16: Top demais! Parabéns!
+[2025-09-18 01:36:56] Comentário 17: Voa, que a vida é linda!
+[2025-09-18 01:36:56] Comentário 18: Que coragem! Admiro!
+[2025-09-18 01:36:56] Comentário 19: Que lugar lindo! 👏
+[2025-09-18 01:36:56] Comentário 20: Que dia perfeito pra voar!
+[2025-09-18 01:36:56] Comentário 21: Que show de imagens!
+[2025-09-18 01:36:56] Comentário 22: Amo parapente! Demais!
+[2025-09-18 01:36:56] Comentário 23: Que sonho! Um dia chego lá!
+[2025-09-18 01:36:56] Comentário 24: Que vibe positiva! ✨
+[2025-09-18 01:36:56] Comentário 25: Voando e sendo feliz!
+[2025-09-18 01:36:56] Comentário 26: Aproveitando a vida ao máximo!
+[2025-09-18 01:36:56] Comentário 27: Que experiência única!
+[2025-09-18 01:36:56] Comentário 28: Parabéns pela conquista!
+[2025-09-18 01:36:56] Comentário 29: Que visual incrível lá de cima!
+[2025-09-18 01:36:56] Comentário 30: Arrasou no vídeo! Show!
+[2025-09-18 01:36:56] Comentário 31: Que adrenalina! Demais!
+[2025-09-18 01:36:56] Comentário 32: Massa demais esse voo!
+[2025-09-18 01:36:56] Comentário 33: Que céu lindo! 😍
+[2025-09-18 01:36:56] Comentário 34: Que dia abençoado!
+[2025-09-18 01:36:56] Comentário 35: Voando com a @ovniparapente! Top!
+[2025-09-18 01:36:56] Comentário 36: Que aventura radical!
+[2025-09-18 01:36:56] Comentário 37: Que sensação maravilhosa!
+[2025-09-18 01:36:56] Comentário 38: Parabéns pela coragem!
+[2025-09-18 01:36:56] Comentário 39: Que vista espetacular!
+[2025-09-18 01:36:56] Comentário 40: Que momento especial!
+[2025-09-18 01:36:56] Comentário 41: Amei o vídeo! Demais!
+[2025-09-18 01:36:56] Comentário 42: Que show de imagens aéreas!
+[2025-09-18 01:36:56] Comentário 43: Que voo incrível! 👏
+[2025-09-18 01:36:56] Comentário 44: Voando e sentindo a liberdade!
+[2025-09-18 01:36:56] Comentário 45: Que dia perfeito para voar!
+[2025-09-18 01:36:56] Comentário 46: Que visual incrível! 🤩
+[2025-09-18 01:36:56] Comentário 47: Amei a legenda! Top!
+[2025-09-18 01:36:56] Comentário 48: Voando alto com a @ovniparapente!
+[2025-09-18 01:36:56] Comentário 49: Que aventura sensacional!
+[2025-09-18 01:36:56] Comentário 50: Que sensação maravilhosa!
+[2025-09-18 01:36:56] Comentário 51: Parabéns pela experiência!
+[2025-09-18 01:36:56] Comentário 52: Que vista de tirar o fôlego!
+[2025-09-18 01:36:56] Comentário 53: Que momento inesquecível!
+[2025-09-18 01:36:56] Comentário 54: Amei o vídeo, demais!
+[2025-09-18 01:36:56] Comentário 55: Que show de imagens aéreas!
+[2025-09-18 01:36:56] Comentário 56: Que voo incrível! 👏
+[2025-09-18 01:36:56] Comentário 57: Voando e sentindo a liberdade!
+[2025-09-18 01:36:56] Comentário 58: Que dia perfeito para voar!
+[2025-09-18 01:36:56] Comentário 59: Que visual incrível! 🤩
+[2025-09-18 01:36:56] Comentário 60: Amei a legenda, top!
+[2025-09-18 01:36:56] Comentário 61: Voando alto com a @ovniparapente!
+[2025-09-18 01:36:56] Comentário 62: Que aventura sensacional!
+[2025-09-18 01:36:56] Comentário 63: Que sensação maravilhosa!
+[2025-09-18 01:36:56] Comentário 64: Parabéns pela experiência!
+[2025-09-18 01:36:56] Comentário 65: Que vista de tirar o fôlego!
+[2025-09-18 01:36:56] Comentário 66: Que momento inesquecível!
+[2025-09-18 01:36:56] Comentário 67: Massa demais esse rolê!
+[2025-09-18 01:36:56] Comentário 68: Que coragem, hein? Parabéns!
+[2025-09-18 01:36:56] Comentário 69: Adorei a vibe do vídeo!
+[2025-09-18 01:36:56] Comentário 70: Que visual incrível, sem palavras!
+[2025-09-18 01:36:56] Comentário 71: A @ovniparapente manda bem demais!
+[2025-09-18 01:36:56] Comentário 72: Que sonho poder voar assim!
+[2025-09-18 01:36:56] Comentário 73: Parabéns pela aventura! Top!
+[2025-09-18 01:36:56] Comentário 74: Que adrenalina! Deu até vontade!
+[2025-09-18 01:36:56] Comentário 75: Show de bola! Curtindo a vida!
+[2025-09-18 01:36:56] Comentário 76: Voa alto, garota! Adorei!
+[2025-09-18 01:36:56] Comentário 77: Que demais! Quero tentar um dia!
+[2025-09-18 01:36:56] Comentário 78: Sensacional! Arrasou no voo!
+[2025-09-18 01:36:56] Comentário 79: Que experiência única! Demais!
+[2025-09-18 01:36:56] Comentário 80: Que liberdade! Adorei o vídeo!
+[2025-09-18 01:36:56] Comentário 81: Massa demais! Voando nas alturas!
+[2025-09-18 01:36:56] Comentário 82: Adrenalina pura! Show de vídeo!
+[2025-09-18 01:36:56] Comentário 83: Que vista maravilhosa! Demais!
+[2025-09-18 01:36:56] Comentário 84: Uau! Que aventura radical!
+[2025-09-18 01:36:56] Comentário 85: Top demais! Parabéns pelo voo!
+[2025-09-18 01:36:56] Comentário 86: Voa, que a vida é uma aventura!
+[2025-09-18 01:36:56] Comentário 87: Que coragem! Admiro demais!
+[2025-09-18 01:36:56] Comentário 88: Que lugar lindo! Amei!
+[2025-09-18 01:36:56] Comentário 89: Que dia perfeito pra voar! Demais!
+[2025-09-18 01:36:56] Comentário 90: Que show de imagens! Parabéns!
+[2025-09-18 01:36:56] Comentário 91: Amo parapente! É sensacional!
+[2025-09-18 01:36:56] Comentário 92: Que sonho! Um dia chego lá! 🙏
+[2025-09-18 01:36:56] Comentário 93: Que vibe positiva! Adorei!
+[2025-09-18 01:36:56] Comentário 94: Voando e sendo feliz! Show!
+[2025-09-18 01:36:56] Comentário 95: Aproveitando a vida ao máximo! 🤩
+[2025-09-18 01:36:56] Comentário 96: Que experiência única! Demais!
+[2025-09-18 01:36:56] Comentário 97: Parabéns pela conquista! Show!
+[2025-09-18 01:36:56] Comentário 98: Que visual incrível lá de cima!
+[2025-09-18 01:36:56] Comentário 99: Arrasou no vídeo! Demais!
+[2025-09-18 01:36:56] Comentário 100: Que adrenalina! Amei demais!
+[2025-09-18 01:36:56] Comentário 101: Massa demais esse voo! Show!
+[2025-09-18 01:36:56] Comentário 102: Que céu lindo! Adorei!
+[2025-09-18 01:36:56] Comentário 103: Que dia abençoado! Demais!
+[2025-09-18 01:36:56] Comentário 104: Voando com a @ovniparapente! Top!
+[2025-09-18 01:36:56] Comentário 105: Que aventura radical! Demais!
+[2025-09-18 01:36:56] Comentário 106: Que sensação maravilhosa! Show!
+[2025-09-18 01:36:56] Comentário 107: Parabéns pela coragem! Amei!
+[2025-09-18 01:36:56] Comentário 108: Que vista espetacular! Demais!
+[2025-09-18 01:36:56] Comentário 109: Que momento especial! Show!
+[2025-09-18 01:36:56] Comentário 110: Amei o vídeo! Sensacional!
+[2025-09-18 01:36:56] Comentário 111: Que show de imagens aéreas! Top!
+[2025-09-18 01:36:56] Comentário 112: Que voo incrível! Amei demais!
+[2025-09-18 01:36:56] Comentário 113: Voando e sentindo a liberdade! 🤩
+[2025-09-18 01:36:56] Comentário 114: Que dia perfeito para voar! Show!
+[2025-09-18 01:36:56] Comentário 115: Que visual incrível! Amei demais!
+[2025-09-18 01:36:56] Comentário 116: Amei a legenda! Top demais!
+[2025-09-18 01:36:56] Comentário 117: Voando alto com
+[2025-09-18 01:36:56] Comentários gerados com sucesso: 117
+[2025-09-18 01:36:56] === GERAÇÃO CONCLUÍDA ===
+[2025-09-18 01:36:59] === INICIANDO GERAÇÃO DE COMENTÁRIOS ===
+[2025-09-18 01:36:59] Quantidade solicitada: 1000
+[2025-09-18 01:36:59] Post ID: 3222345824822384690
+[2025-09-18 01:36:59] Imagem fornecida: NÃO
+[2025-09-18 01:36:59] Construindo prompt...
+[2025-09-18 01:36:59] Prompt construído com 974 caracteres
+[2025-09-18 01:36:59] Construindo dados da requisição...
+[2025-09-18 01:36:59] Fazendo requisição para Gemini...
+[2025-09-18 01:36:59] URL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyAil2qyZbLII3Iw6CaqvSPo38bdKLdoC6w
+[2025-09-18 01:36:59] Body size: 1268 bytes
+[2025-09-18 01:37:08] Código de resposta: 200
+[2025-09-18 01:37:08] Resposta (primeiros 300 chars): {
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Maneiro demais, simples e estiloso!\nAmei a vibe minimalista, arrasou!\nBásico que funciona, né? 👏\nSuper me identifiquei com esse estilo!\nOnde você comprou essa peça? 😉\nBásico, mas com muit
+[2025-09-18 01:37:08] Processando resposta do Gemini...
+[2025-09-18 01:37:08] Texto gerado: Maneiro demais, simples e estiloso!
+Amei a vibe minimalista, arrasou!
+Básico que funciona, né? 👏
+Super me identifiquei com esse estilo!
+Onde você comprou essa peça? 😉
+Básico, mas com muita ...
+[2025-09-18 01:37:08] Comentários processados: 96
+[2025-09-18 01:37:08] Comentário 1: Maneiro demais, simples e estiloso!
+[2025-09-18 01:37:08] Comentário 2: Amei a vibe minimalista, arrasou!
+[2025-09-18 01:37:08] Comentário 3: Básico que funciona, né? 👏
+[2025-09-18 01:37:08] Comentário 4: Super me identifiquei com esse estilo!
+[2025-09-18 01:37:08] Comentário 5: Onde você comprou essa peça? 😉
+[2025-09-18 01:37:08] Comentário 6: Básico, mas com muita personalidade!
+[2025-09-18 01:37:08] Comentário 7: Arrasou na simplicidade, viu?
+[2025-09-18 01:37:08] Comentário 8: Amo essa pegada "menos é mais"!
+[2025-09-18 01:37:08] Comentário 9: Que look confortável e estiloso!
+[2025-09-18 01:37:08] Comentário 10: Queria ter essa sua elegância natural!
+[2025-09-18 01:37:08] Comentário 11: Básico nunca sai de moda, né? 😎
+[2025-09-18 01:37:08] Comentário 12: Adorei a combinação de cores!
+[2025-09-18 01:37:08] Comentário 13: Super usaria esse look no dia a dia!
+[2025-09-18 01:37:08] Comentário 14: Você sempre arrasa, não importa o look!
+[2025-09-18 01:37:08] Comentário 15: Amei a vibe clean, super inspirador!
+[2025-09-18 01:37:08] Comentário 16: Que look estiloso e sem esforço!
+[2025-09-18 01:37:08] Comentário 17: Você é a rainha do básico chique!
+[2025-09-18 01:37:08] Comentário 18: Adorei o vídeo, super inspirador!
+[2025-09-18 01:37:08] Comentário 19: A simplicidade te deixa ainda mais linda!
+[2025-09-18 01:37:08] Comentário 20: Queria ter essa sua facilidade de criar looks!
+[2025-09-18 01:37:08] Comentário 21: Amei a música de fundo do vídeo!
+[2025-09-18 01:37:08] Comentário 22: Super usaria esse look no final de semana!
+[2025-09-18 01:37:08] Comentário 23: Você me inspira a ser mais minimalista!
+[2025-09-18 01:37:08] Comentário 24: Que look perfeito para qualquer ocasião!
+[2025-09-18 01:37:08] Comentário 25: Adorei a sua atitude, super confiante!
+[2025-09-18 01:37:08] Comentário 26: Básico, mas com um toque especial!
+[2025-09-18 01:37:08] Comentário 27: Você é a prova de que menos é mais!
+[2025-09-18 01:37:08] Comentário 28: Amei a sua energia, super contagiante!
+[2025-09-18 01:37:08] Comentário 29: Que look confortável e estiloso ao mesmo tempo!
+[2025-09-18 01:37:08] Comentário 30: Você me inspira a ser mais autêntica!
+[2025-09-18 01:37:08] Comentário 31: Amei a sua espontaneidade no vídeo!
+[2025-09-18 01:37:08] Comentário 32: Super usaria esse look para sair com as amigas!
+[2025-09-18 01:37:08] Comentário 33: Você é a minha musa inspiradora!
+[2025-09-18 01:37:08] Comentário 34: Que look perfeito para o dia a dia!
+[2025-09-18 01:37:08] Comentário 35: Adorei a sua leveza, super inspirador!
+[2025-09-18 01:37:08] Comentário 36: Básico, mas com muito estilo e atitude!
+[2025-09-18 01:37:08] Comentário 37: Você é a rainha da simplicidade chique!
+[2025-09-18 01:37:08] Comentário 38: Amei a sua vibe good vibes!
+[2025-09-18 01:37:08] Comentário 39: Que look confortável e estiloso para o verão!
+[2025-09-18 01:37:08] Comentário 40: Você me inspira a ser mais feliz!
+[2025-09-18 01:37:08] Comentário 41: Amei a sua alegria no vídeo!
+[2025-09-18 01:37:08] Comentário 42: Super usaria esse look para ir ao trabalho!
+[2025-09-18 01:37:08] Comentário 43: Você é a minha inspiração diária!
+[2025-09-18 01:37:08] Comentário 44: Que look perfeito para um encontro casual!
+[2025-09-18 01:37:08] Comentário 45: Adorei a sua positividade, super contagiante!
+[2025-09-18 01:37:08] Comentário 46: Básico, mas com um toque de sofisticação!
+[2025-09-18 01:37:08] Comentário 47: Você é a prova de que a beleza está na simplicidade!
+[2025-09-18 01:37:08] Comentário 48: Amei a sua vibe zen!
+[2025-09-18 01:37:08] Comentário 49: Que look confortável e estiloso para viajar!
+[2025-09-18 01:37:08] Comentário 50: Você me inspira a ser mais forte!
+[2025-09-18 01:37:08] Comentário 51: Amei a sua determinação no vídeo!
+[2025-09-18 01:37:08] Comentário 52: Super usaria esse look para ir ao cinema!
+[2025-09-18 01:37:08] Comentário 53: Você é a minha heroína!
+[2025-09-18 01:37:08] Comentário 54: Que look perfeito para um dia de compras!
+[2025-09-18 01:37:08] Comentário 55: Adorei a sua autenticidade, super inspirador!
+[2025-09-18 01:37:08] Comentário 56: Básico, mas com um toque de ousadia!
+[2025-09-18 01:37:08] Comentário 57: Você é a rainha do estilo próprio!
+[2025-09-18 01:37:08] Comentário 58: Amei a sua vibe good vibes only!
+[2025-09-18 01:37:08] Comentário 59: Que look confortável e estiloso para um dia de sol!
+[2025-09-18 01:37:08] Comentário 60: Você me inspira a ser mais corajosa!
+[2025-09-18 01:37:08] Comentário 61: Amei a sua sinceridade no vídeo!
+[2025-09-18 01:37:08] Comentário 62: Super usaria esse look para ir a um show!
+[2025-09-18 01:37:08] Comentário 63: Você é a minha luz!
+[2025-09-18 01:37:08] Comentário 64: Que look perfeito para um jantar especial!
+[2025-09-18 01:37:08] Comentário 65: Adorei a sua criatividade, super inspirador!
+[2025-09-18 01:37:08] Comentário 66: Básico, mas com um toque de glamour!
+[2025-09-18 01:37:08] Comentário 67: Você é a prova de que a elegância está nos detalhes!
+[2025-09-18 01:37:08] Comentário 68: Amei a sua vibe alto astral!
+[2025-09-18 01:37:08] Comentário 69: Que look confortável e estiloso para um dia de chuva!
+[2025-09-18 01:37:08] Comentário 70: Você me inspira a ser mais gentil!
+[2025-09-18 01:37:08] Comentário 71: Amei a sua bondade no vídeo!
+[2025-09-18 01:37:08] Comentário 72: Super usaria esse look para ir a uma festa!
+[2025-09-18 01:37:08] Comentário 73: Você é a minha salvação!
+[2025-09-18 01:37:08] Comentário 74: Que look perfeito para um dia de praia!
+[2025-09-18 01:37:08] Comentário 75: Adorei a sua sensibilidade, super inspirador!
+[2025-09-18 01:37:08] Comentário 76: Básico, mas com um toque de mistério!
+[2025-09-18 01:37:08] Comentário 77: Você é a rainha do charme!
+[2025-09-18 01:37:08] Comentário 78: Amei a sua vibe relax!
+[2025-09-18 01:37:08] Comentário 79: Que look confortável e estiloso para um dia em casa!
+[2025-09-18 01:37:08] Comentário 80: Você me inspira a ser mais paciente!
+[2025-09-18 01:37:08] Comentário 81: Amei a sua calma no vídeo!
+[2025-09-18 01:37:08] Comentário 82: Super usaria esse look para ir a um barzinho!
+[2025-09-18 01:37:08] Comentário 83: Você é o meu anjo!
+[2025-09-18 01:37:08] Comentário 84: Que look perfeito para um dia de trabalho!
+[2025-09-18 01:37:08] Comentário 85: Adorei a sua inteligência, super inspirador!
+[2025-09-18 01:37:08] Comentário 86: Básico, mas com um toque de atitude!
+[2025-09-18 01:37:08] Comentário 87: Você é a prova de que a beleza vem de dentro!
+[2025-09-18 01:37:08] Comentário 88: Amei a sua vibe good vibes total!
+[2025-09-18 01:37:08] Comentário 89: Que look confortável e estiloso para um dia de frio!
+[2025-09-18 01:37:08] Comentário 90: Você me inspira a ser mais grata!
+[2025-09-18 01:37:08] Comentário 91: Amei a sua gratidão no vídeo!
+[2025-09-18 01:37:08] Comentário 92: Super usaria esse look para ir a um casamento!
+[2025-09-18 01:37:08] Comentário 93: Você é a minha força!
+[2025-09-18 01:37:08] Comentário 94: Que look perfeito para um dia de aventura!
+[2025-09-18 01:37:08] Comentário 95: Adorei a sua energia positiva, super inspirador!
+[2025-09-18 01:37:08] Comentário 96: Básico,
+[2025-09-18 01:37:08] Comentários gerados com sucesso: 96
+[2025-09-18 01:37:08] === GERAÇÃO CONCLUÍDA ===

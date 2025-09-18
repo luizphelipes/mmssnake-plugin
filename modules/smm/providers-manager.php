@@ -46,11 +46,11 @@ class SMMProvidersManager {
             $test_result = $this->test_provider_connection($url, $key);
             if (!$test_result['success']) {
                 // Apenas mostrar aviso, não bloquear o salvamento
-                error_log('SMM Provider Connection Test Failed: ' . $test_result['message']);
+                // Log removido para produção
             }
         } catch (Exception $e) {
             // Log do erro, mas continuar com o salvamento
-            error_log('SMM Provider Connection Test Exception: ' . $e->getMessage());
+            // Log removido para produção
         }
         
         // Adicionar provedor
@@ -67,8 +67,7 @@ class SMMProvidersManager {
             'name' => $name,
             'api_url' => $url,
             'api_key' => $key,
-            'created_at' => current_time('mysql'),
-            'status' => 'active'
+            'created_at' => current_time('mysql')
         ];
         
         update_option('smm_providers', $providers);
@@ -312,19 +311,13 @@ class SMMProvidersManager {
             $providers = [];
         }
         
+        $default_provider_id = get_option('smm_default_provider', '');
+        
         $stats = [
             'total' => count($providers),
-            'active' => 0,
-            'inactive' => 0
+            'active' => !empty($default_provider_id) ? 1 : 0,
+            'inactive' => !empty($default_provider_id) ? (count($providers) - 1) : count($providers)
         ];
-        
-        foreach ($providers as $provider) {
-            if (isset($provider['status']) && $provider['status'] === 'active') {
-                $stats['active']++;
-            } else {
-                $stats['inactive']++;
-            }
-        }
         
         return $stats;
     }

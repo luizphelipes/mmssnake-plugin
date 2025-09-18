@@ -12,7 +12,11 @@ if (!defined('ABSPATH')) {
 $smm_files = [
     'smm-api.php',
     'providers-manager.php',
-    'smm-module.php'
+    'smm-module.php',
+    'category-rules.php',
+    'instagram-scraper.php',
+    'gemini-comments-generator.php',
+    'smm-variation-mapper.php'
 ];
 
 foreach ($smm_files as $file) {
@@ -195,9 +199,11 @@ add_action('wp_dashboard_setup', function() {
                 echo '<h4>Provedores Configurados:</h4>';
                 echo '<ul>';
                 foreach ($providers as $id => $provider) {
-                    $status_color = ($provider['status'] === 'active') ? '#28a745' : '#dc3545';
+                    $is_default = (get_option('smm_default_provider', '') === $id);
+                    $status_color = $is_default ? '#28a745' : '#0073aa';
+                    $status_text = $is_default ? 'Padrão' : 'Disponível';
                     echo '<li style="color: ' . $status_color . ';">';
-                    echo '• ' . esc_html($provider['name']) . ' (' . esc_html($provider['status']) . ')';
+                    echo '• ' . esc_html($provider['name']) . ' (' . $status_text . ')';
                     echo '</li>';
                 }
                 echo '</ul>';

@@ -1,0 +1,72 @@
+[2025-09-17 22:12:57] === TESTE DE CONECTIVIDADE ===
+[2025-09-17 22:12:57] Fazendo requisição para API...
+[2025-09-17 22:12:57] URL da requisição: https://instagram-social-api.p.rapidapi.com/v1/post_info?code_or_id_or_url=C0UWodpJogI
+[2025-09-17 22:12:57] Headers: {"x-rapidapi-key":"bb099aa633mshc32e5a3e833a238p1ba333jsn4e4ed3a7d3ce","x-rapidapi-host":"instagram-social-api.p.rapidapi.com","Content-Type":"application\/json"}
+[2025-09-17 22:13:00] Código de resposta: 200
+[2025-09-17 22:13:00] Resposta (primeiros 500 chars): {"data":{"accessibility_caption":null,"are_remixes_crosspostable":true,"avatar_stickers":[],"boost_unavailable_identifier":null,"boost_unavailable_reason":null,"boost_unavailable_reason_v2":null,"can_reply":false,"can_reshare":true,"can_save":true,"caption":{"created_at":1701450223,"created_at_utc":1701450223,"did_report_as_spam":false,"hashtags":["#WeeklyFluff"],"id":"3248320768872187912","is_covered":false,"is_ranked_comment":false,"mentions":["@crumpet_the_puddin"],"pk":"18001395179470347","p
+[2025-09-17 22:13:00] TESTE: Conectividade OK
+[2025-09-17 22:13:20] === INICIANDO INSTAGRAM SCRAPER ===
+[2025-09-17 22:13:20] URL recebida: https://instagram.com/p/DEA0wAZvUOB/
+[2025-09-17 22:13:20] Extraindo código da URL: https://instagram.com/p/DEA0wAZvUOB/
+[2025-09-17 22:13:20] Código extraído via regex: DEA0wAZvUOB
+[2025-09-17 22:13:20] Código extraído: DEA0wAZvUOB
+[2025-09-17 22:13:20] Fazendo requisição para API...
+[2025-09-17 22:13:20] URL da requisição: https://instagram-social-api.p.rapidapi.com/v1/post_info?code_or_id_or_url=DEA0wAZvUOB
+[2025-09-17 22:13:20] Headers: {"x-rapidapi-key":"bb099aa633mshc32e5a3e833a238p1ba333jsn4e4ed3a7d3ce","x-rapidapi-host":"instagram-social-api.p.rapidapi.com","Content-Type":"application\/json"}
+[2025-09-17 22:13:22] Código de resposta: 200
+[2025-09-17 22:13:22] Resposta (primeiros 500 chars): {"data":{"accessibility_caption":null,"boost_unavailable_identifier":null,"boost_unavailable_reason":null,"boost_unavailable_reason_v2":null,"can_reply":false,"can_reshare":true,"can_save":true,"caption":{"created_at":1735154473,"created_at_utc":1735154473,"did_report_as_spam":false,"has_translation":true,"hashtags":[],"id":"3531054105243763585","is_covered":false,"is_ranked_comment":false,"mentions":[],"pk":"18476000326053226","private_reply_status":0,"share_enabled":false,"text":"🚀 Teste ag
+[2025-09-17 22:13:22] Processando resposta da API...
+[2025-09-17 22:13:22] Dados processados com sucesso
+[2025-09-17 22:13:22] Tipo de mídia: foto
+[2025-09-17 22:13:22] Caption (primeiros 100 chars): 🚀 Teste agora com apenas R$5!
+Na Pede Pra Seguir, você não precisa de cadastro para usar nossos
+[2025-09-17 22:13:22] Curtidas: 7231, Comentários: 60
+[2025-09-17 22:13:22] === SCRAPING CONCLUÍDO COM SUCESSO ===
+[2025-09-17 22:15:33] === INICIANDO INSTAGRAM SCRAPER ===
+[2025-09-17 22:15:33] URL recebida: https://instagram.com/p/DEDlCQKxe0W/
+[2025-09-17 22:15:33] Extraindo código da URL: https://instagram.com/p/DEDlCQKxe0W/
+[2025-09-17 22:15:33] Código extraído via regex: DEDlCQKxe0W
+[2025-09-17 22:15:33] Código extraído: DEDlCQKxe0W
+[2025-09-17 22:15:33] Fazendo requisição para API...
+[2025-09-17 22:15:33] URL da requisição: https://instagram-social-api.p.rapidapi.com/v1/post_info?code_or_id_or_url=DEDlCQKxe0W
+[2025-09-17 22:15:33] Headers: {"x-rapidapi-key":"bb099aa633mshc32e5a3e833a238p1ba333jsn4e4ed3a7d3ce","x-rapidapi-host":"instagram-social-api.p.rapidapi.com","Content-Type":"application\/json"}
+[2025-09-17 22:15:35] Código de resposta: 200
+[2025-09-17 22:15:35] Resposta (primeiros 500 chars): {"data":{"accessibility_caption":null,"are_remixes_crosspostable":true,"avatar_stickers":[],"boost_unavailable_identifier":null,"boost_unavailable_reason":null,"boost_unavailable_reason_v2":null,"can_reply":false,"can_reshare":true,"can_save":true,"caption":{"created_at":1735246949,"created_at_utc":1735246949,"did_report_as_spam":false,"has_translation":true,"hashtags":["#leonardo"],"id":"3531829415309077782","is_covered":false,"is_ranked_comment":false,"mentions":[],"pk":"18062729215894832","pr
+[2025-09-17 22:15:35] Processando resposta da API...
+[2025-09-17 22:15:35] Dados processados com sucesso
+[2025-09-17 22:15:35] Tipo de mídia: vídeo
+[2025-09-17 22:15:35] Caption (primeiros 100 chars): Você não vai acreditar!Leonardo, sempre uma figura marcante, aprontou novamente! Em uma entrevista
+[2025-09-17 22:15:35] Curtidas: 5, Comentários: 1
+[2025-09-17 22:15:35] === SCRAPING CONCLUÍDO COM SUCESSO ===
+[2025-09-18 01:36:46] === INICIANDO INSTAGRAM SCRAPER ===
+[2025-09-18 01:36:46] URL recebida: https://instagram.com/p/C3OQJkTgTn6/
+[2025-09-18 01:36:46] Extraindo código da URL: https://instagram.com/p/C3OQJkTgTn6/
+[2025-09-18 01:36:46] Código extraído via regex: C3OQJkTgTn6
+[2025-09-18 01:36:46] Código extraído: C3OQJkTgTn6
+[2025-09-18 01:36:46] Fazendo requisição para API...
+[2025-09-18 01:36:46] URL da requisição: https://instagram-social-api.p.rapidapi.com/v1/post_info?code_or_id_or_url=C3OQJkTgTn6
+[2025-09-18 01:36:46] Headers: {"x-rapidapi-key":"bb099aa633mshc32e5a3e833a238p1ba333jsn4e4ed3a7d3ce","x-rapidapi-host":"instagram-social-api.p.rapidapi.com","Content-Type":"application\/json"}
+[2025-09-18 01:36:47] Código de resposta: 200
+[2025-09-18 01:36:47] Resposta (primeiros 500 chars): {"data":{"accessibility_caption":null,"are_remixes_crosspostable":true,"avatar_stickers":[],"boost_unavailable_identifier":null,"boost_unavailable_reason":null,"boost_unavailable_reason_v2":null,"can_reply":false,"can_reshare":true,"can_save":true,"caption":{"created_at":1707695005,"created_at_utc":1707695005,"did_report_as_spam":false,"has_translation":true,"hashtags":[],"id":"3300646603110562298","is_covered":false,"is_ranked_comment":false,"mentions":["@ovniparapente"],"pk":"17955295553738434
+[2025-09-18 01:36:47] Processando resposta da API...
+[2025-09-18 01:36:47] Dados processados com sucesso
+[2025-09-18 01:36:47] Tipo de mídia: vídeo
+[2025-09-18 01:36:47] Caption (primeiros 100 chars): O primeiro voo do ano. E a @ovniparapente apoiando como sempre!
+[2025-09-18 01:36:47] Curtidas: 356, Comentários: 10
+[2025-09-18 01:36:47] === SCRAPING CONCLUÍDO COM SUCESSO ===
+[2025-09-18 01:36:56] === INICIANDO INSTAGRAM SCRAPER ===
+[2025-09-18 01:36:56] URL recebida: https://instagram.com/p/Cy4EnR4AFgy/
+[2025-09-18 01:36:56] Extraindo código da URL: https://instagram.com/p/Cy4EnR4AFgy/
+[2025-09-18 01:36:56] Código extraído via regex: Cy4EnR4AFgy
+[2025-09-18 01:36:56] Código extraído: Cy4EnR4AFgy
+[2025-09-18 01:36:56] Fazendo requisição para API...
+[2025-09-18 01:36:56] URL da requisição: https://instagram-social-api.p.rapidapi.com/v1/post_info?code_or_id_or_url=Cy4EnR4AFgy
+[2025-09-18 01:36:56] Headers: {"x-rapidapi-key":"bb099aa633mshc32e5a3e833a238p1ba333jsn4e4ed3a7d3ce","x-rapidapi-host":"instagram-social-api.p.rapidapi.com","Content-Type":"application\/json"}
+[2025-09-18 01:36:59] Código de resposta: 200
+[2025-09-18 01:36:59] Resposta (primeiros 500 chars): {"data":{"accessibility_caption":null,"are_remixes_crosspostable":true,"avatar_stickers":[],"boost_unavailable_identifier":null,"boost_unavailable_reason":null,"boost_unavailable_reason_v2":null,"can_reply":false,"can_reshare":true,"can_save":true,"caption":{"created_at":1698353616,"created_at_utc":1698353616,"did_report_as_spam":false,"has_translation":true,"hashtags":[],"id":"3222345824822384690","is_covered":false,"is_ranked_comment":false,"mentions":[],"pk":"17979858722530762","private_reply
+[2025-09-18 01:36:59] Processando resposta da API...
+[2025-09-18 01:36:59] Dados processados com sucesso
+[2025-09-18 01:36:59] Tipo de mídia: vídeo
+[2025-09-18 01:36:59] Caption (primeiros 100 chars): Nada além do básico.
+[2025-09-18 01:36:59] Curtidas: 442, Comentários: 3
+[2025-09-18 01:36:59] === SCRAPING CONCLUÍDO COM SUCESSO ===

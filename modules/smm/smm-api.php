@@ -25,6 +25,23 @@ class SMMApi {
         return json_decode((string)$this->connect($post));
     }
     
+    /** Add order with custom comments */
+    public function orderWithComments($data) {
+        // Preparar comentários para envio
+        $comments = isset($data['comments']) ? $data['comments'] : '';
+        if (is_array($comments)) {
+            $comments = implode("\n", $comments);
+        }
+        
+        // Remover quantity dos dados e adicionar comments
+        $order_data = $data;
+        unset($order_data['quantity']); // Não enviar quantity para comentários
+        $order_data['comments'] = $comments;
+        
+        $post = array_merge(['key' => $this->api_key, 'action' => 'add'], $order_data);
+        return json_decode((string)$this->connect($post));
+    }
+    
     /** Get order status  */
     public function status($order_id) {
         return json_decode(
@@ -160,7 +177,6 @@ class SMMApi {
             return $this->connect_with_wp_remote($post_data);
             
         } catch (Exception $e) {
-            error_log('SMM API Connect Error: ' . $e->getMessage());
             return json_encode(['error' => $e->getMessage()]);
         }
     }
